@@ -3,114 +3,371 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>LAUNCHGUARD — Amazon Compliance Risk Check</title>
-  <meta name="description" content="Check Amazon product inserts, review requests, landing pages, and campaign copy for potential policy risks before launch." />
+
+  <meta
+    name="description"
+    content="Check Amazon product inserts, review requests, landing pages, and campaign copy for potential policy risks before launch."
+  />
+
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Privacy-friendly analytics by Plausible -->
+  <script
+    async
+    src="https://plausible.io/js/pa-YNaZ8hRILQKtbYapi4p0c.js">
+  </script>
+
+  <script>
+    window.plausible =
+      window.plausible ||
+      function () {
+        (plausible.q = plausible.q || []).push(arguments);
+      };
+
+    plausible.init =
+      plausible.init ||
+      function (options) {
+        plausible.o = options || {};
+      };
+
+    plausible.init();
+  </script>
 </head>
+
 <body>
+
   <header class="site-header">
     <div class="container nav">
+
       <div class="brand">
         <div class="brand-mark">LG</div>
+
         <div>
           <div class="brand-name">LAUNCHGUARD</div>
-          <div class="brand-sub">Amazon compliance risk check</div>
+          <div class="brand-sub">
+            Amazon compliance risk check
+          </div>
         </div>
       </div>
-      <a class="nav-cta" href="#checker">Check my campaign</a>
+
+      <a class="nav-cta" href="#checker">
+        Check my campaign
+      </a>
+
     </div>
   </header>
 
+
   <main>
+
     <section class="hero">
       <div class="container hero-grid">
+
         <div class="hero-copy">
-          <div class="eyebrow">CHECK BEFORE YOU LAUNCH</div>
-          <h1>Check your Amazon campaign before you launch.</h1>
+
+          <div class="eyebrow">
+            CHECK BEFORE YOU LAUNCH
+          </div>
+
+          <h1>
+            Check your Amazon campaign
+            before you launch.
+          </h1>
+
           <p class="lead">
-            Scan your product insert, review request, landing page, or campaign copy
-            for potential Amazon policy risks before it goes live.
+            Scan your product insert, review request,
+            landing page, or campaign copy for potential
+            Amazon policy risks before it goes live.
           </p>
 
           <div class="benefits">
-            <div>✓ Identify risky wording</div>
-            <div>✓ Understand why it may be risky</div>
-            <div>✓ Get suggested safer changes</div>
+
+            <div>
+              ✓ Identify risky wording
+            </div>
+
+            <div>
+              ✓ Understand why it may be risky
+            </div>
+
+            <div>
+              ✓ Get suggested safer changes
+            </div>
+
           </div>
 
-          <a class="primary-btn" href="#checker">Check my campaign</a>
-          <p class="microcopy">No software install. First review request is free during validation.</p>
+          <a class="primary-btn" href="#checker">
+            Check my campaign
+          </a>
+
+          <p class="microcopy">
+            No software install. First review request
+            is free during validation.
+          </p>
+
         </div>
+
 
         <div class="hero-card" id="checker">
-          <h2>What would you like to check?</h2>
 
-          <div class="type-grid" id="typeGrid">
-            <button class="type-option active" data-type="Product Insert">Product Insert</button>
-            <button class="type-option" data-type="Review Request">Review Request</button>
-            <button class="type-option" data-type="Landing Page">Landing Page</button>
-            <button class="type-option" data-type="Campaign Copy">Campaign Copy</button>
+          <h2>
+            What would you like to check?
+          </h2>
+
+          <div
+            class="type-grid"
+            id="typeGrid"
+          >
+
+            <button
+              class="type-option active"
+              data-type="Product Insert"
+            >
+              Product Insert
+            </button>
+
+            <button
+              class="type-option"
+              data-type="Review Request"
+            >
+              Review Request
+            </button>
+
+            <button
+              class="type-option"
+              data-type="Landing Page"
+            >
+              Landing Page
+            </button>
+
+            <button
+              class="type-option"
+              data-type="Campaign Copy"
+            >
+              Campaign Copy
+            </button>
+
           </div>
 
-          <label for="content">Paste your content</label>
-          <textarea id="content" placeholder="Paste the wording you want checked here..."></textarea>
 
-          <button id="analyzeBtn" class="primary-btn full">Analyze for policy risks</button>
+          <label for="content">
+            Paste your content
+          </label>
 
-          <div id="resultBox" class="result-box hidden">
-            <div class="result-icon">!</div>
-            <div>
-              <h3>Manual risk review requested</h3>
-              <p>
-                LAUNCHGUARD is currently in validation. Your submission has been captured
-                as a request for a manual compliance risk review.
-              </p>
-              <button id="requestBtn" class="secondary-btn">Request my review</button>
+          <textarea
+            id="content"
+            placeholder="Paste the wording you want checked here..."
+          ></textarea>
+
+
+          <button
+            id="analyzeBtn"
+            class="primary-btn full"
+          >
+            Analyze for policy risks
+          </button>
+
+
+          <div
+            id="resultBox"
+            class="result-box hidden"
+          >
+
+            <div class="result-icon">
+              !
             </div>
+
+            <div>
+
+              <h3>
+                Manual risk review requested
+              </h3>
+
+              <p>
+                LAUNCHGUARD is currently in validation.
+                Your submission has been captured as a
+                request for a manual compliance risk review.
+              </p>
+
+              <button
+                id="requestBtn"
+                class="secondary-btn"
+              >
+                Request my review
+              </button>
+
+            </div>
+
           </div>
+
 
           <p class="disclaimer">
-            LAUNCHGUARD identifies potential policy risks and can provide relevant policy references.
-            It does not guarantee Amazon approval or enforcement outcomes.
+            LAUNCHGUARD identifies potential policy risks
+            and can provide relevant policy references.
+            It does not guarantee Amazon approval or
+            enforcement outcomes.
           </p>
+
         </div>
+
       </div>
     </section>
+
 
     <section class="how">
+
       <div class="container">
-        <h2>How it works</h2>
+
+        <h2>
+          How it works
+        </h2>
+
         <div class="steps">
-          <div class="step"><span>1</span><strong>Paste</strong><p>Add your insert, review request, landing page, or campaign copy.</p></div>
-          <div class="step"><span>2</span><strong>Check</strong><p>We review the wording for potential Amazon policy risks.</p></div>
-          <div class="step"><span>3</span><strong>Understand</strong><p>See what may be risky and why.</p></div>
-          <div class="step"><span>4</span><strong>Fix</strong><p>Adjust the wording before you launch.</p></div>
+
+          <div class="step">
+            <span>1</span>
+
+            <strong>
+              Paste
+            </strong>
+
+            <p>
+              Add your insert, review request,
+              landing page, or campaign copy.
+            </p>
+          </div>
+
+
+          <div class="step">
+            <span>2</span>
+
+            <strong>
+              Check
+            </strong>
+
+            <p>
+              We review the wording for potential
+              Amazon policy risks.
+            </p>
+          </div>
+
+
+          <div class="step">
+            <span>3</span>
+
+            <strong>
+              Understand
+            </strong>
+
+            <p>
+              See what may be risky and why.
+            </p>
+          </div>
+
+
+          <div class="step">
+            <span>4</span>
+
+            <strong>
+              Fix
+            </strong>
+
+            <p>
+              Adjust the wording before you launch.
+            </p>
+          </div>
+
         </div>
+
       </div>
+
     </section>
+
 
     <section class="why">
+
       <div class="container why-grid">
+
         <div>
-          <div class="eyebrow">WHY LAUNCHGUARD</div>
-          <h2>One small wording mistake can create a much bigger problem.</h2>
+
+          <div class="eyebrow">
+            WHY LAUNCHGUARD
+          </div>
+
+          <h2>
+            One small wording mistake can create
+            a much bigger problem.
+          </h2>
+
         </div>
+
+
         <div class="why-list">
-          <div><strong>Before launch, not after damage.</strong><br />Catch potential risk before a campaign goes live.</div>
-          <div><strong>Built around one decision.</strong><br />Can I launch this wording, or should I change it first?</div>
-          <div><strong>No false guarantees.</strong><br />Risk detection and policy references, not a fake Amazon approval stamp.</div>
+
+          <div>
+            <strong>
+              Before launch, not after damage.
+            </strong>
+
+            <br />
+
+            Catch potential risk before a campaign
+            goes live.
+          </div>
+
+
+          <div>
+            <strong>
+              Built around one decision.
+            </strong>
+
+            <br />
+
+            Can I launch this wording,
+            or should I change it first?
+          </div>
+
+
+          <div>
+            <strong>
+              No false guarantees.
+            </strong>
+
+            <br />
+
+            Risk detection and policy references,
+            not a fake Amazon approval stamp.
+          </div>
+
         </div>
+
       </div>
+
     </section>
+
   </main>
 
+
   <footer>
+
     <div class="container footer">
-      <span>LAUNCHGUARD</span>
-      <span>Validation version — not affiliated with Amazon.</span>
+
+      <span>
+        LAUNCHGUARD
+      </span>
+
+      <span>
+        Validation version — not affiliated with Amazon.
+      </span>
+
     </div>
+
   </footer>
 
+
   <script src="javascript.js"></script>
+
 </body>
 </html>
