@@ -1,21 +1,30 @@
+"use strict";
+
 let selectedType = "Product Insert";
 
-document.querySelectorAll(".type-option").forEach((button) => {
+const typeButtons = document.querySelectorAll(".type-option");
+const contentInput = document.getElementById("content");
+const analyzeBtn = document.getElementById("analyzeBtn");
+const resultBox = document.getElementById("resultBox");
+const requestBtn = document.getElementById("requestBtn");
+
+typeButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    document
-      .querySelectorAll(".type-option")
-      .forEach((b) => b.classList.remove("active"));
+    typeButtons.forEach((item) => {
+      item.classList.remove("active");
+    });
 
     button.classList.add("active");
-    selectedType = button.dataset.type;
+    selectedType = button.dataset.type || "Product Insert";
   });
 });
 
-document.getElementById("analyzeBtn").addEventListener("click", () => {
-  const content = document.getElementById("content").value.trim();
+analyzeBtn.addEventListener("click", () => {
+  const content = contentInput.value.trim();
 
   if (!content) {
     alert("Please paste the content you want checked.");
+    contentInput.focus();
     return;
   }
 
@@ -24,37 +33,46 @@ document.getElementById("analyzeBtn").addEventListener("click", () => {
     contentLength: content.length
   });
 
-  document.getElementById("resultBox").classList.remove("hidden");
+  resultBox.classList.remove("hidden");
 
-  document.getElementById("resultBox").scrollIntoView({
+  resultBox.scrollIntoView({
     behavior: "smooth",
     block: "center"
   });
 });
 
-document.getElementById("requestBtn").addEventListener("click", () => {
-  const content = document.getElementById("content").value.trim();
+requestBtn.addEventListener("click", () => {
+  const content = contentInput.value.trim();
+
+  if (!content) {
+    alert("Please paste the content you want reviewed.");
+    contentInput.focus();
+    return;
+  }
 
   console.log("LAUNCHGUARD_REVIEW_REQUESTED", {
     type: selectedType,
     contentLength: content.length
   });
 
+  const recipient = "gilbertperkmann@yahoo.de";
   const subject = "LAUNCHGUARD Risk Review";
 
-  const body =
-    "I would like a manual LAUNCHGUARD compliance risk review.\n\n" +
-    "Content type: " +
-    selectedType +
-    "\n\n" +
-    "Content to review:\n" +
-    content +
-    "\n\n" +
-    "Please reply with the next step.";
+  const body = [
+    "I would like a manual LAUNCHGUARD compliance risk review.",
+    "",
+    `Content type: ${selectedType}`,
+    "",
+    "Content to review:",
+    content,
+    "",
+    "Please reply with the next step."
+  ].join("\n");
 
-  window.location.href =
-    "mailto:gilbertperkmann@yahoo.de?subject=" +
-    encodeURIComponent(subject) +
-    "&body=" +
-    encodeURIComponent(body);
+  const mailtoUrl =
+    `mailto:${recipient}` +
+    `?subject=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(body)}`;
+
+  window.location.href = mailtoUrl;
 });
