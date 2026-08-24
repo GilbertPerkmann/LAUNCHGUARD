@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.7
+// LAUNCHGUARD V0.8
 // RISK REPORT
 //
 // Uses:
@@ -11,6 +11,7 @@
 // - manufacturer-country consistency analysis
 // - model-number consistency analysis
 // - test-report model-number consistency analysis
+// - Declaration / Test report EN-standard consistency analysis
 // - PASS / VERIFY / BLOCK / INSUFFICIENT DATA
 // ==================================================
 
@@ -427,6 +428,33 @@ function getTestReportModelNumberConsistency(
     analysis
       .contentConsistency
       .testReportModelNumber
+  );
+
+}
+
+
+function getStandardConsistency(
+  file
+) {
+
+  const analysis =
+    getDocumentAnalysis(
+      file
+    );
+
+  if (
+    !analysis ||
+    !analysis.contentConsistency ||
+    !analysis.contentConsistency.standardConsistency
+  ) {
+
+    return null;
+  }
+
+  return (
+    analysis
+      .contentConsistency
+      .standardConsistency
   );
 
 }
@@ -1253,6 +1281,158 @@ function buildTestReportModelNumberFinding(
 }
 
 
+
+// ==================================================
+// STANDARD CONSISTENCY FINDING
+// ==================================================
+
+function buildStandardConsistencyFinding(
+  declaration,
+  testReport
+) {
+
+  if (
+    !declaration ||
+    !testReport
+  ) {
+    return null;
+  }
+
+  const analysis =
+    getStandardConsistency(
+      declaration
+    ) ||
+    getStandardConsistency(
+      testReport
+    );
+
+  if (!analysis) {
+    return null;
+  }
+
+  if (
+    analysis.status ===
+    "NOT_EVALUATED"
+  ) {
+    return null;
+  }
+
+  const declarationStandards =
+    Array.isArray(
+      analysis.declarationStandards
+    )
+      ? analysis.declarationStandards
+      : [];
+
+  const testReportStandards =
+    Array.isArray(
+      analysis.testReportStandards
+    )
+      ? analysis.testReportStandards
+      : [];
+
+  const matchedStandards =
+    Array.isArray(
+      analysis.matchedStandards
+    )
+      ? analysis.matchedStandards
+      : [];
+
+  const declarationText =
+    declarationStandards.length
+      ? declarationStandards.join(", ")
+      : "not identified";
+
+  const testReportText =
+    testReportStandards.length
+      ? testReportStandards.join(", ")
+      : "not identified";
+
+  if (
+    analysis.status ===
+    "CONSISTENT"
+  ) {
+
+    return createFinding(
+      "PASS",
+      "Referenced EN standard is consistent",
+      "At least one EN standard identified in the Declaration of Conformity is also identified in the Test report.",
+      `Declaration of Conformity: ${declarationText} · Test report: ${testReportText}`,
+      "No EN-standard correction is required for this consistency check.",
+      {
+        detailType:
+          "STANDARD_CONSISTENCY",
+        result:
+          analysis.status,
+        confidence:
+          analysis.confidence,
+        declarationStandards:
+          declarationStandards,
+        testReportStandards:
+          testReportStandards,
+        matchedStandards:
+          matchedStandards
+      }
+    );
+
+  }
+
+  if (
+    analysis.status ===
+    "MISMATCH"
+  ) {
+
+    return createFinding(
+      "BLOCK",
+      "Referenced EN standard mismatch",
+      analysis.reason ||
+        "The Declaration of Conformity and Test report reference different EN standards.",
+      `Declaration of Conformity: ${declarationText} · Test report: ${testReportText}`,
+      "Verify which EN standards apply to the product and align the Declaration of Conformity and Test report before launch.",
+      {
+        detailType:
+          "STANDARD_CONSISTENCY",
+        result:
+          analysis.status,
+        confidence:
+          analysis.confidence,
+        declarationStandards:
+          declarationStandards,
+        testReportStandards:
+          testReportStandards,
+        matchedStandards:
+          matchedStandards
+      }
+    );
+
+  }
+
+  return createFinding(
+    "VERIFY",
+    "Referenced EN standards require verification",
+    analysis.reason ||
+      "LAUNCHGUARD could not make a reliable EN-standard comparison between the Declaration of Conformity and Test report.",
+    `Declaration of Conformity: ${declarationText} · Test report: ${testReportText}`,
+    "Verify the applicable EN standards in the Declaration of Conformity and Test report.",
+    {
+      detailType:
+        "STANDARD_CONSISTENCY",
+      result:
+        analysis.status,
+      confidence:
+        analysis.confidence,
+      declarationStandards:
+        declarationStandards,
+      testReportStandards:
+        testReportStandards,
+      matchedStandards:
+        matchedStandards
+    }
+  );
+
+}
+
+
 // ==================================================
 // BUILD FINDINGS
 // ==================================================
@@ -1502,6 +1682,24 @@ function buildFindings(
     }
 
 
+    const standardConsistencyFinding =
+      buildStandardConsistencyFinding(
+        evidence.declaration,
+        evidence.testReport
+      );
+
+
+    if (
+      standardConsistencyFinding
+    ) {
+
+      findings.push(
+        standardConsistencyFinding
+      );
+
+    }
+
+
   }
 
 
@@ -1606,9 +1804,9 @@ function buildFindings(
 
       "VERIFY",
 
-      "Manual V0.7 compliance review still required",
+      "Manual V0.8 compliance review still required",
 
-      "The current validation version can inspect document-type signals and perform limited wattage, manufacturer-country, Declaration model-number and Test report model-number consistency checks, but it does not yet perform a complete automated compliance determination.",
+      "The current validation version can inspect document-type signals and perform limited wattage, manufacturer-country, Declaration model-number, Test report model-number and EN-standard consistency checks, but it does not yet perform a complete automated compliance determination.",
 
       "Review mode: MANUAL_VALIDATION",
 
@@ -1956,6 +2154,113 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.testReportModel ||
+              "—"
+            )}
+          </strong>
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+
+  // =================================================
+  // STANDARD CONSISTENCY
+  // =================================================
+
+  if (
+    details.detailType ===
+    "STANDARD_CONSISTENCY"
+  ) {
+
+    const declarationStandards =
+      Array.isArray(
+        details.declarationStandards
+      )
+        ? details.declarationStandards.join(", ")
+        : "—";
+
+    const testReportStandards =
+      Array.isArray(
+        details.testReportStandards
+      )
+        ? details.testReportStandards.join(", ")
+        : "—";
+
+    const matchedStandards =
+      Array.isArray(
+        details.matchedStandards
+      )
+        ? details.matchedStandards
+            .map(
+              (
+                item
+              ) =>
+                item && item.base
+                  ? item.base
+                  : ""
+            )
+            .filter(Boolean)
+            .join(", ")
+        : "";
+
+    return `
+
+      <div class="finding-row">
+
+        <span>
+          CONSISTENCY ANALYSIS
+        </span>
+
+        <p>
+
+          Result:
+          <strong>
+            ${escapeHtml(
+              details.result ||
+              "—"
+            )}
+          </strong>
+
+          <br>
+
+          Confidence:
+          <strong>
+            ${escapeHtml(
+              details.confidence ||
+              "—"
+            )}
+          </strong>
+
+          <br>
+
+          Declaration of Conformity:
+          <strong>
+            ${escapeHtml(
+              declarationStandards ||
+              "—"
+            )}
+          </strong>
+
+          <br>
+
+          Test report:
+          <strong>
+            ${escapeHtml(
+              testReportStandards ||
+              "—"
+            )}
+          </strong>
+
+          <br>
+
+          Matching standard:
+          <strong>
+            ${escapeHtml(
+              matchedStandards ||
               "—"
             )}
           </strong>

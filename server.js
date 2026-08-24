@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.7
+// LAUNCHGUARD V0.8
 // LOCAL MVP SERVER
 //
 // DOCUMENT ANALYSIS:
@@ -16,6 +16,7 @@
 // - manufacturer-country / origin consistency
 // - model-number consistency: Product label <-> Declaration of Conformity
 // - model-number consistency: Product label <-> Test report
+// - EN-standard consistency: Declaration of Conformity <-> Test report
 //
 // IMPORTANT:
 // This is a pre-launch risk signal system.
@@ -4238,6 +4239,7 @@ function extractModelNumber(
 }
 
 
+
 // ==================================================
 // MODEL NUMBER CONSISTENCY
 // PRODUCT LABEL <-> DECLARATION OF CONFORMITY
@@ -4749,6 +4751,401 @@ function analyzeTestReportModelNumberConsistency(
   };
 
 }
+
+
+// ==================================================
+// EN STANDARD NORMALIZATION
+// ==================================================
+
+function normalizeEnStandard(
+  value
+) {
+
+  return String(
+    value || ""
+  )
+    .toUpperCase()
+    .replace(
+      /\s+/g,
+      " "
+    )
+    .replace(
+      /\s*:\s*/g,
+      ":"
+    )
+    .replace(
+      /\s*-\s*/g,
+      "-"
+    )
+    .trim();
+
+}
+
+
+// ==================================================
+// EN STANDARD EXTRACTION
+// ==================================================
+
+function extractEnStandards(
+  text
+) {
+
+  const normalized =
+    normalizeText(
+      text
+    );
+
+  const regex =
+    /\bEN\s+\d{3,5}(?:-\d+)*(?::\d{4})?(?:\+\w+\d*)?/gi;
+
+  const values =
+    [];
+
+  let match =
+    null;
+
+  while (
+    (
+      match =
+        regex.exec(
+          normalized
+        )
+    ) !== null
+  ) {
+
+    const value =
+      normalizeEnStandard(
+        match[0]
+      );
+
+    if (
+      value
+    ) {
+
+      values.push(
+        value
+      );
+
+    }
+
+  }
+
+  return [
+    ...new Set(
+      values
+    )
+  ];
+
+}
+
+
+// ==================================================
+// EN STANDARD BASE ID
+// ==================================================
+
+function getEnStandardBase(
+  value
+) {
+
+  const normalized =
+    normalizeEnStandard(
+      value
+    );
+
+  const match =
+    normalized.match(
+      /^EN\s+\d{3,5}(?:-\d+)*/
+    );
+
+  return match
+    ? match[0]
+    : normalized;
+
+}
+
+
+// ==================================================
+// DECLARATION <-> TEST REPORT STANDARD CONSISTENCY
+// ==================================================
+
+function analyzeStandardConsistency(
+  declarationAnalysis,
+  declarationText,
+  testReportAnalysis,
+  testReportText
+) {
+
+  if (
+    !declarationAnalysis ||
+    !testReportAnalysis
+  ) {
+
+    return {
+
+      status:
+        "NOT_EVALUATED",
+
+      confidence:
+        "LOW",
+
+      declarationStandards:
+        [],
+
+      testReportStandards:
+        [],
+
+      matchedStandards:
+        [],
+
+      reason:
+        "Standard consistency could not be evaluated because both the Declaration of Conformity and Test report are required."
+
+    };
+
+  }
+
+  if (
+    declarationAnalysis.status !==
+      "LIKELY_MATCH"
+  ) {
+
+    return {
+
+      status:
+        "NOT_EVALUATED",
+
+      confidence:
+        "LOW",
+
+      declarationStandards:
+        [],
+
+      testReportStandards:
+        [],
+
+      matchedStandards:
+        [],
+
+      reason:
+        "Standard consistency was not evaluated because the Declaration of Conformity was not reliably classified."
+
+    };
+
+  }
+
+  if (
+    testReportAnalysis.status !==
+      "LIKELY_MATCH"
+  ) {
+
+    return {
+
+      status:
+        "NOT_EVALUATED",
+
+      confidence:
+        "LOW",
+
+      declarationStandards:
+        [],
+
+      testReportStandards:
+        [],
+
+      matchedStandards:
+        [],
+
+      reason:
+        "Standard consistency was not evaluated because the Test report was not reliably classified."
+
+    };
+
+  }
+
+  const declarationStandards =
+    extractEnStandards(
+      declarationText
+    );
+
+  const testReportStandards =
+    extractEnStandards(
+      testReportText
+    );
+
+  if (
+    declarationStandards.length ===
+    0
+  ) {
+
+    return {
+
+      status:
+        "VERIFY",
+
+      confidence:
+        "LOW",
+
+      declarationStandards:
+        [],
+
+      testReportStandards:
+        testReportStandards,
+
+      matchedStandards:
+        [],
+
+      reason:
+        "No EN standard could be identified reliably in the Declaration of Conformity."
+
+    };
+
+  }
+
+  if (
+    testReportStandards.length ===
+    0
+  ) {
+
+    return {
+
+      status:
+        "VERIFY",
+
+      confidence:
+        "LOW",
+
+      declarationStandards:
+        declarationStandards,
+
+      testReportStandards:
+        [],
+
+      matchedStandards:
+        [],
+
+      reason:
+        "No EN standard could be identified reliably in the Test report."
+
+    };
+
+  }
+
+  const declarationBases =
+    new Map(
+      declarationStandards.map(
+        (
+          value
+        ) => [
+          getEnStandardBase(
+            value
+          ),
+          value
+        ]
+      )
+    );
+
+  const testReportBases =
+    new Map(
+      testReportStandards.map(
+        (
+          value
+        ) => [
+          getEnStandardBase(
+            value
+          ),
+          value
+        ]
+      )
+    );
+
+  const matchedBases =
+    [
+      ...declarationBases.keys()
+    ]
+      .filter(
+        (
+          base
+        ) =>
+          testReportBases.has(
+            base
+          )
+      );
+
+  const matchedStandards =
+    matchedBases.map(
+      (
+        base
+      ) => ({
+
+        base:
+          base,
+
+        declaration:
+          declarationBases.get(
+            base
+          ),
+
+        testReport:
+          testReportBases.get(
+            base
+          )
+
+      })
+    );
+
+  if (
+    matchedStandards.length >
+    0
+  ) {
+
+    return {
+
+      status:
+        "CONSISTENT",
+
+      confidence:
+        "HIGH",
+
+      declarationStandards:
+        declarationStandards,
+
+      testReportStandards:
+        testReportStandards,
+
+      matchedStandards:
+        matchedStandards,
+
+      reason:
+        `The Declaration of Conformity and Test report reference at least one matching EN standard (${matchedStandards.map(item => item.base).join(", ")}).`
+
+    };
+
+  }
+
+  return {
+
+    status:
+      "MISMATCH",
+
+    confidence:
+      "HIGH",
+
+    declarationStandards:
+      declarationStandards,
+
+    testReportStandards:
+      testReportStandards,
+
+    matchedStandards:
+      [],
+
+    reason:
+      `The Declaration of Conformity references ${declarationStandards.join(", ")}, while the Test report references ${testReportStandards.join(", ")}. No matching EN standard was identified.`
+
+  };
+
+}
+
 
 // ==================================================
 // ANALYZE STORED FILE
@@ -5416,7 +5813,81 @@ app.post(
       }
 
 
+      
       // =================================================
+      // EN STANDARD CONSISTENCY
+      // DECLARATION OF CONFORMITY <-> TEST REPORT
+      // =================================================
+
+      if (
+        declaration &&
+        testReport
+      ) {
+
+        const standardConsistency =
+          analyzeStandardConsistency(
+
+            declaration
+              .documentTypeAnalysis,
+
+            declaration
+              .extractedText ||
+              "",
+
+            testReport
+              .documentTypeAnalysis,
+
+            testReport
+              .extractedText ||
+              ""
+
+          );
+
+        consistencyAnalysis.standardConsistency =
+          standardConsistency;
+
+        if (
+          !declaration
+            .documentTypeAnalysis
+            .contentConsistency
+        ) {
+
+          declaration
+            .documentTypeAnalysis
+            .contentConsistency =
+            {};
+
+        }
+
+        declaration
+          .documentTypeAnalysis
+          .contentConsistency
+          .standardConsistency =
+            standardConsistency;
+
+        if (
+          !testReport
+            .documentTypeAnalysis
+            .contentConsistency
+        ) {
+
+          testReport
+            .documentTypeAnalysis
+            .contentConsistency =
+            {};
+
+        }
+
+        testReport
+          .documentTypeAnalysis
+          .contentConsistency
+          .standardConsistency =
+            standardConsistency;
+
+      }
+
+
+// =================================================
       // REMOVE FULL EXTRACTED TEXT
       // =================================================
 
@@ -5448,7 +5919,7 @@ app.post(
           "MANUAL_VALIDATION",
 
         analysisVersion:
-          "0.7.0-test-report-model-consistency",
+          "0.8.0-standard-consistency",
 
         product:
           product,
@@ -5660,6 +6131,40 @@ testReportModelNumberConsistency:
         confidence:
           consistencyAnalysis
             .testReportModelNumber
+            .confidence
+
+      }
+    : null
+,
+
+
+standardConsistency:
+  consistencyAnalysis.standardConsistency
+    ? {
+
+        status:
+          consistencyAnalysis
+            .standardConsistency
+            .status,
+
+        declaration:
+          consistencyAnalysis
+            .standardConsistency
+            .declarationStandards,
+
+        testReport:
+          consistencyAnalysis
+            .standardConsistency
+            .testReportStandards,
+
+        matched:
+          consistencyAnalysis
+            .standardConsistency
+            .matchedStandards,
+
+        confidence:
+          consistencyAnalysis
+            .standardConsistency
             .confidence
 
       }
@@ -5881,7 +6386,7 @@ app.get(
         "LAUNCHGUARD",
 
       version:
-        "0.7.0",
+        "0.8.0",
 
       documentAnalysis:
         true,
@@ -5898,7 +6403,8 @@ app.get(
   "WATTAGE",
   "MANUFACTURER_COUNTRY",
   "MODEL_NUMBER",
-  "TEST_REPORT_MODEL_NUMBER"
+  "TEST_REPORT_MODEL_NUMBER",
+  "STANDARD_CONSISTENCY"
 ]
 
     });
@@ -6021,7 +6527,7 @@ app.listen(
 
 
    console.log(
-  "LAUNCHGUARD V0.7"
+  "LAUNCHGUARD V0.8"
 );
 
 
@@ -6077,6 +6583,11 @@ app.listen(
 
   console.log(
   "Consistency check: TEST REPORT MODEL NUMBER ENABLED"
+);
+
+
+  console.log(
+  "Consistency check: STANDARD CONSISTENCY ENABLED"
 );
 
     console.log(

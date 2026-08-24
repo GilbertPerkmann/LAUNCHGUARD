@@ -14,7 +14,7 @@ Model:
 LG-65W-1C
 
 Test Standard:
-EN 62368-1
+EN 60335-1
 
 Test Result:
 PASS
