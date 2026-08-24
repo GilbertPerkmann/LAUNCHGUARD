@@ -1,17 +1,26 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
 
-  <title>LAUNCHGUARD — Amazon Compliance Risk Check</title>
+  <title>
+    LAUNCHGUARD — Amazon Pre-Launch Risk Check
+  </title>
 
   <meta
     name="description"
-    content="Check Amazon product inserts, review requests, landing pages, and campaign copy for potential policy risks before launch."
+    content="Check your Amazon product, listing and compliance evidence for detectable risks before launch."
   />
 
-  <link rel="stylesheet" href="styles.css" />
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  />
 
   <!-- Privacy-friendly analytics by Plausible -->
   <script
@@ -36,34 +45,60 @@
   </script>
 </head>
 
+
 <body>
 
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
   <header class="site-header">
+
     <div class="container nav">
 
       <div class="brand">
-        <div class="brand-mark">LG</div>
+
+        <div class="brand-mark">
+          LG
+        </div>
 
         <div>
-          <div class="brand-name">LAUNCHGUARD</div>
+          <div class="brand-name">
+            LAUNCHGUARD
+          </div>
+
           <div class="brand-sub">
-            Amazon compliance risk check
+            Amazon pre-launch risk check
           </div>
         </div>
+
       </div>
 
-      <a class="nav-cta" href="#checker">
-        Check my campaign
-      </a>
+
+      <button
+        class="nav-cta"
+        id="navStartBtn"
+        type="button"
+      >
+        Start Pre-Launch Check
+      </button>
 
     </div>
+
   </header>
 
 
   <main>
 
+    <!-- =========================================
+         HERO / SCREEN 1
+    ========================================== -->
+
     <section class="hero">
+
       <div class="container hero-grid">
+
+        <!-- LEFT -->
 
         <div class="hero-copy">
 
@@ -71,212 +106,543 @@
             CHECK BEFORE YOU LAUNCH
           </div>
 
+
           <h1>
-            Check your Amazon campaign
-            before you launch.
+            Check your product
+            before Amazon does.
           </h1>
 
+
           <p class="lead">
-            Scan your product insert, review request,
-            landing page, or campaign copy for potential
-            Amazon policy risks before it goes live.
+            Find detectable listing, documentation
+            and compliance risks before you launch
+            your product on Amazon.
           </p>
+
 
           <div class="benefits">
 
-            <div>
-              ✓ Identify risky wording
+            <div class="benefit">
+              <span class="benefit-check">✓</span>
+
+              <span>
+                Check your planned Amazon listing
+              </span>
             </div>
 
-            <div>
-              ✓ Understand why it may be risky
+
+            <div class="benefit">
+              <span class="benefit-check">✓</span>
+
+              <span>
+                Upload labels and compliance evidence
+              </span>
             </div>
 
-            <div>
-              ✓ Get suggested safer changes
+
+            <div class="benefit">
+              <span class="benefit-check">✓</span>
+
+              <span>
+                Find blockers and missing evidence before launch
+              </span>
             </div>
 
           </div>
-
-          <a class="primary-btn" href="#checker">
-            Check my campaign
-          </a>
-
-          <p class="microcopy">
-            No software install. First review request
-            is free during validation.
-          </p>
-
-        </div>
-
-
-        <div class="hero-card" id="checker">
-
-          <h2>
-            What would you like to check?
-          </h2>
-
-          <div
-            class="type-grid"
-            id="typeGrid"
-          >
-
-            <button
-              class="type-option active"
-              data-type="Product Insert"
-            >
-              Product Insert
-            </button>
-
-            <button
-              class="type-option"
-              data-type="Review Request"
-            >
-              Review Request
-            </button>
-
-            <button
-              class="type-option"
-              data-type="Landing Page"
-            >
-              Landing Page
-            </button>
-
-            <button
-              class="type-option"
-              data-type="Campaign Copy"
-            >
-              Campaign Copy
-            </button>
-
-          </div>
-
-
-          <label for="content">
-            Paste your content
-          </label>
-
-          <textarea
-            id="content"
-            placeholder="Paste the wording you want checked here..."
-          ></textarea>
 
 
           <button
-            id="analyzeBtn"
-            class="primary-btn full"
+            class="primary-btn"
+            id="heroStartBtn"
+            type="button"
           >
-            Analyze for policy risks
+            Start Pre-Launch Check
           </button>
 
 
-          <div
-            id="resultBox"
-            class="result-box hidden"
-          >
+          <p class="microcopy">
+            Validation version. First pre-launch review
+            is free.
+          </p>
 
-            <div class="result-icon">
-              !
+        </div>
+
+
+        <!-- RIGHT -->
+
+        <div class="hero-card">
+
+          <div class="card-topline">
+
+            <span class="card-status">
+              PRE-LAUNCH CHECK
+            </span>
+
+            <span class="card-time">
+              Before launch
+            </span>
+
+          </div>
+
+
+          <h2>
+            What LAUNCHGUARD checks
+          </h2>
+
+
+          <p class="card-intro">
+            Bring the product information you already
+            have before launch.
+          </p>
+
+
+          <div class="check-preview">
+
+            <div class="preview-row">
+
+              <div class="preview-number">
+                1
+              </div>
+
+              <div>
+                <strong>
+                  Product
+                </strong>
+
+                <span>
+                  Marketplace, category and product details
+                </span>
+              </div>
+
             </div>
 
-            <div>
 
-              <h3>
-                Manual risk review requested
-              </h3>
+            <div class="preview-row">
 
-              <p>
-                LAUNCHGUARD is currently in validation.
-                Your submission has been captured as a
-                request for a manual compliance risk review.
-              </p>
+              <div class="preview-number">
+                2
+              </div>
 
-              <button
-                id="requestBtn"
-                class="secondary-btn"
-              >
-                Request my review
-              </button>
+              <div>
+                <strong>
+                  Listing
+                </strong>
+
+                <span>
+                  Title, bullets and description
+                </span>
+              </div>
+
+            </div>
+
+
+            <div class="preview-row">
+
+              <div class="preview-number">
+                3
+              </div>
+
+              <div>
+                <strong>
+                  Evidence
+                </strong>
+
+                <span>
+                  Label, packaging and compliance documents
+                </span>
+              </div>
+
+            </div>
+
+
+            <div class="preview-row">
+
+              <div class="preview-number">
+                4
+              </div>
+
+              <div>
+                <strong>
+                  Risk Report
+                </strong>
+
+                <span>
+                  Blockers, verification needs and missing data
+                </span>
+              </div>
 
             </div>
 
           </div>
 
 
+          <button
+            class="primary-btn full"
+            id="cardStartBtn"
+            type="button"
+          >
+            Start Pre-Launch Check
+          </button>
+
+
           <p class="disclaimer">
-            LAUNCHGUARD identifies potential policy risks
-            and can provide relevant policy references.
-            It does not guarantee Amazon approval or
-            enforcement outcomes.
+            LAUNCHGUARD identifies detectable risks
+            based on the information provided.
+            It does not guarantee Amazon approval
+            or regulatory compliance.
           </p>
 
         </div>
 
       </div>
+
     </section>
 
 
-    <section class="how">
+    <!-- =========================================
+         HOW IT WORKS
+    ========================================== -->
+
+    <section
+      class="how"
+      id="process"
+    >
 
       <div class="container">
 
-        <h2>
-          How it works
-        </h2>
+        <div class="section-heading">
+
+          <div>
+            <div class="eyebrow">
+              THE PROCESS
+            </div>
+
+            <h2>
+              From product data to a launch decision.
+            </h2>
+          </div>
+
+
+          <p>
+            LAUNCHGUARD is designed around one moment:
+            deciding whether a product is ready to launch.
+          </p>
+
+        </div>
+
 
         <div class="steps">
 
+
           <div class="step">
-            <span>1</span>
+
+            <span>
+              1
+            </span>
 
             <strong>
-              Paste
+              Add Product
             </strong>
 
             <p>
-              Add your insert, review request,
-              landing page, or campaign copy.
+              Add your marketplace, category
+              and core product information.
             </p>
+
           </div>
 
 
           <div class="step">
-            <span>2</span>
+
+            <span>
+              2
+            </span>
 
             <strong>
-              Check
+              Upload Evidence
             </strong>
 
             <p>
-              We review the wording for potential
-              Amazon policy risks.
+              Add your listing, label, packaging
+              and available compliance documents.
             </p>
+
           </div>
 
 
           <div class="step">
-            <span>3</span>
+
+            <span>
+              3
+            </span>
 
             <strong>
-              Understand
+              Pre-Launch Check
             </strong>
 
             <p>
-              See what may be risky and why.
+              Product, listing and evidence are checked
+              for detectable risks and inconsistencies.
             </p>
+
           </div>
 
 
           <div class="step">
-            <span>4</span>
+
+            <span>
+              4
+            </span>
 
             <strong>
-              Fix
+              Fix Risks
             </strong>
 
             <p>
-              Adjust the wording before you launch.
+              See what should be corrected,
+              verified or supplied before launch.
             </p>
+
+          </div>
+
+
+          <div class="step">
+
+            <span>
+              5
+            </span>
+
+            <strong>
+              Launch
+            </strong>
+
+            <p>
+              Make the launch decision with
+              clearer evidence in front of you.
+            </p>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================
+         REPORT PREVIEW
+    ========================================== -->
+
+    <section class="report-section">
+
+      <div class="container report-grid">
+
+        <div class="report-copy">
+
+          <div class="eyebrow">
+            ONE CLEAR OUTPUT
+          </div>
+
+
+          <h2>
+            Know what can stop your launch.
+          </h2>
+
+
+          <p>
+            LAUNCHGUARD does not hide everything behind
+            one vague score. Each finding tells you
+            what was found, why it matters and what
+            should happen next.
+          </p>
+
+
+          <div class="report-points">
+
+            <div>
+              <strong>
+                Issue
+              </strong>
+
+              <span>
+                What was detected.
+              </span>
+            </div>
+
+
+            <div>
+              <strong>
+                Why it matters
+              </strong>
+
+              <span>
+                Why it may affect the launch.
+              </span>
+            </div>
+
+
+            <div>
+              <strong>
+                Evidence / Rule
+              </strong>
+
+              <span>
+                What the finding is based on.
+              </span>
+            </div>
+
+
+            <div>
+              <strong>
+                Required action
+              </strong>
+
+              <span>
+                What should happen before launch.
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="risk-report">
+
+          <div class="risk-report-header">
+
+            <div>
+
+              <small>
+                PRE-LAUNCH RISK REPORT
+              </small>
+
+              <h3>
+                100W USB-C Laptop Charger
+              </h3>
+
+              <p>
+                Amazon.de
+              </p>
+
+            </div>
+
+
+            <div class="report-badge">
+              NOT READY
+            </div>
+
+          </div>
+
+
+          <div class="report-summary">
+
+            <div class="summary-item blocker">
+
+              <strong>
+                2
+              </strong>
+
+              <span>
+                Blockers
+              </span>
+
+            </div>
+
+
+            <div class="summary-item verify">
+
+              <strong>
+                3
+              </strong>
+
+              <span>
+                Verify
+              </span>
+
+            </div>
+
+
+            <div class="summary-item pass">
+
+              <strong>
+                14
+              </strong>
+
+              <span>
+                Passed
+              </span>
+
+            </div>
+
+
+            <div class="summary-item missing">
+
+              <strong>
+                1
+              </strong>
+
+              <span>
+                Missing
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="finding">
+
+            <div class="finding-status block">
+              BLOCK
+            </div>
+
+
+            <h4>
+              Declaration does not match product
+            </h4>
+
+
+            <div class="finding-comparison">
+
+              <div>
+                <span>
+                  Product
+                </span>
+
+                <strong>
+                  ADL100YDC3A · 100W
+                </strong>
+              </div>
+
+
+              <div>
+                <span>
+                  Uploaded Declaration
+                </span>
+
+                <strong>
+                  XYZ-65W · 65W
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div class="finding-action">
+
+              <span>
+                ACTION BEFORE LAUNCH
+              </span>
+
+              <strong>
+                Upload the correct Declaration of Conformity.
+              </strong>
+
+            </div>
+
           </div>
 
         </div>
@@ -285,6 +651,10 @@
 
     </section>
 
+
+    <!-- =========================================
+         WHY
+    ========================================== -->
 
     <section class="why">
 
@@ -296,50 +666,69 @@
             WHY LAUNCHGUARD
           </div>
 
+
           <h2>
-            One small wording mistake can create
-            a much bigger problem.
+            Find launch risks before they become
+            Amazon problems.
           </h2>
+
+
+          <p class="why-copy">
+            Compliance problems are often discovered
+            only after Amazon asks for evidence,
+            restricts a listing or triggers enforcement.
+            LAUNCHGUARD moves that check earlier.
+          </p>
 
         </div>
 
 
         <div class="why-list">
 
+
           <div>
+
             <strong>
               Before launch, not after damage.
             </strong>
 
-            <br />
+            <p>
+              Look for detectable risks while there is
+              still time to correct them.
+            </p>
 
-            Catch potential risk before a campaign
-            goes live.
           </div>
 
 
           <div>
+
             <strong>
-              Built around one decision.
+              More than listing copy.
             </strong>
 
-            <br />
+            <p>
+              Compare product information, listing,
+              labels, packaging and available evidence.
+            </p>
 
-            Can I launch this wording,
-            or should I change it first?
           </div>
 
 
           <div>
+
             <strong>
-              No false guarantees.
+              No false certainty.
             </strong>
 
-            <br />
+            <p>
+              When the available information is not enough,
+              LAUNCHGUARD can return VERIFY or
+              INSUFFICIENT DATA instead of pretending
+              the product is compliant.
+            </p>
 
-            Risk detection and policy references,
-            not a fake Amazon approval stamp.
           </div>
+
 
         </div>
 
@@ -347,8 +736,46 @@
 
     </section>
 
+
+    <!-- =========================================
+         FINAL CTA
+    ========================================== -->
+
+    <section class="final-cta">
+
+      <div class="container final-cta-inner">
+
+        <div>
+
+          <small>
+            BEFORE YOUR NEXT AMAZON LAUNCH
+          </small>
+
+          <h2>
+            Check what you can fix before it goes live.
+          </h2>
+
+        </div>
+
+
+        <button
+          class="primary-btn final-btn"
+          id="bottomStartBtn"
+          type="button"
+        >
+          Start Pre-Launch Check
+        </button>
+
+      </div>
+
+    </section>
+
   </main>
 
+
+  <!-- =========================================
+       FOOTER
+  ========================================== -->
 
   <footer>
 
@@ -370,4 +797,5 @@
   <script src="javascript.js"></script>
 
 </body>
+
 </html>

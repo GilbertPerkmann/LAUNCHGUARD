@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <title>
+    Listing & Evidence — LAUNCHGUARD
+  </title>
+
+  <meta
+    name="description"
+    content="Add your planned Amazon listing and available compliance evidence before running a LAUNCHGUARD pre-launch risk check."
+  />
+
+  <link
+    rel="stylesheet"
+    href="../styles.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="../css/app.css"
+  />
+</head>
+
+
+<body>
+
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
+  <header class="site-header">
+
+    <div class="container nav">
+
+      <a
+        class="brand app-brand"
+        href="../index.html"
+      >
+
+        <div class="brand-mark">
+          LG
+        </div>
+
+        <div>
+
+          <div class="brand-name">
+            LAUNCHGUARD
+          </div>
+
+          <div class="brand-sub">
+            Amazon pre-launch risk check
+          </div>
+
+        </div>
+
+      </a>
+
+
+      <div class="app-step-indicator">
+        Step 2 of 4
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================== -->
+
+  <main class="app-main">
+
+    <div class="container app-container">
+
+
+      <!-- =====================================
+           PROGRESS
+      ====================================== -->
+
+      <div class="app-progress">
+
+        <div class="progress-item completed">
+
+          <div class="progress-number">
+            ✓
+          </div>
+
+          <div>
+            <strong>
+              Product
+            </strong>
+
+            <span>
+              Basic details
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="progress-line active-line"></div>
+
+
+        <div class="progress-item active">
+
+          <div class="progress-number">
+            2
+          </div>
+
+          <div>
+            <strong>
+              Listing & Evidence
+            </strong>
+
+            <span>
+              Content & documents
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="progress-line"></div>
+
+
+        <div class="progress-item">
+
+          <div class="progress-number">
+            3
+          </div>
+
+          <div>
+            <strong>
+              Check
+            </strong>
+
+            <span>
+              Pre-launch review
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="progress-line"></div>
+
+
+        <div class="progress-item">
+
+          <div class="progress-number">
+            4
+          </div>
+
+          <div>
+            <strong>
+              Report
+            </strong>
+
+            <span>
+              Launch decision
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================
+           PAGE HEADING
+      ====================================== -->
+
+      <div class="app-heading">
+
+        <div class="eyebrow">
+          LISTING & EVIDENCE
+        </div>
+
+        <h1 class="app-title">
+          Add what Amazon would see — and what supports it.
+        </h1>
+
+        <p class="app-lead">
+          Add your planned listing and the evidence you
+          already have. LAUNCHGUARD will use both to look
+          for detectable risks, inconsistencies and missing
+          information before launch.
+        </p>
+
+      </div>
+
+
+      <!-- =====================================
+           PRODUCT SUMMARY
+      ====================================== -->
+
+      <div class="product-summary-card">
+
+        <div>
+
+          <span class="summary-label">
+            PRODUCT
+          </span>
+
+          <strong id="summaryProductName">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span class="summary-label">
+            MARKETPLACE
+          </span>
+
+          <strong id="summaryMarketplace">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span class="summary-label">
+            CATEGORY
+          </span>
+
+          <strong id="summaryCategory">
+            —
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================
+           FORM
+      ====================================== -->
+
+      <form
+        id="listingEvidenceForm"
+        class="setup-card"
+        novalidate
+      >
+
+
+        <!-- LISTING -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span class="form-section-number">
+              1
+            </span>
+
+            <div>
+
+              <h2>
+                Planned Amazon listing
+              </h2>
+
+              <p>
+                Add the listing content you intend to use
+                when the product goes live.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-field listing-field">
+
+            <label for="listingTitle">
+              Title
+              <span class="required">*</span>
+            </label>
+
+            <input
+              type="text"
+              id="listingTitle"
+              name="listingTitle"
+              placeholder="Paste the planned Amazon product title"
+              autocomplete="off"
+              required
+            />
+
+          </div>
+
+
+          <div class="form-field listing-field">
+
+            <label for="bulletPoints">
+              Bullet points
+              <span class="required">*</span>
+            </label>
+
+            <textarea
+              id="bulletPoints"
+              name="bulletPoints"
+              placeholder="Paste your planned bullet points here..."
+              required
+            ></textarea>
+
+            <small class="field-help">
+              You can paste all bullet points into this field.
+            </small>
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="description">
+              Description
+              <span class="required">*</span>
+            </label>
+
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Paste your planned product description here..."
+              required
+            ></textarea>
+
+          </div>
+
+        </div>
+
+
+        <!-- EVIDENCE -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span class="form-section-number">
+              2
+            </span>
+
+            <div>
+
+              <h2>
+                Available evidence
+              </h2>
+
+              <p>
+                Add the documents and product materials
+                you already have before launch.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="evidence-intro">
+
+            <strong>
+              Upload what is available.
+            </strong>
+
+            <p>
+              Missing documents are not automatically a failure.
+              They may result in VERIFY or INSUFFICIENT DATA
+              when the check cannot make a reliable decision.
+            </p>
+
+          </div>
+
+
+          <!-- PRODUCT LABEL -->
+
+          <div class="upload-item">
+
+            <div class="upload-copy">
+
+              <strong>
+                Product label
+              </strong>
+
+              <span>
+                Label artwork, photo or final label file
+              </span>
+
+            </div>
+
+
+            <label
+              class="upload-button"
+              for="productLabel"
+            >
+              Choose file
+            </label>
+
+            <input
+              class="file-input"
+              type="file"
+              id="productLabel"
+              name="productLabel"
+              accept=".pdf,.png,.jpg,.jpeg,.webp"
+            />
+
+            <div
+              class="file-name"
+              data-file-name="productLabel"
+            >
+              No file selected
+            </div>
+
+          </div>
+
+
+          <!-- PACKAGING -->
+
+          <div class="upload-item">
+
+            <div class="upload-copy">
+
+              <strong>
+                Packaging photo / artwork
+              </strong>
+
+              <span>
+                Front, back or packaging artwork
+              </span>
+
+            </div>
+
+
+            <label
+              class="upload-button"
+              for="packaging"
+            >
+              Choose file
+            </label>
+
+            <input
+              class="file-input"
+              type="file"
+              id="packaging"
+              name="packaging"
+              accept=".pdf,.png,.jpg,.jpeg,.webp"
+            />
+
+            <div
+              class="file-name"
+              data-file-name="packaging"
+            >
+              No file selected
+            </div>
+
+          </div>
+
+
+          <!-- INSTRUCTIONS -->
+
+          <div class="upload-item">
+
+            <div class="upload-copy">
+
+              <strong>
+                Instructions / manual
+              </strong>
+
+              <span>
+                User manual, instructions or safety information
+              </span>
+
+            </div>
+
+
+            <label
+              class="upload-button"
+              for="instructions"
+            >
+              Choose file
+            </label>
+
+            <input
+              class="file-input"
+              type="file"
+              id="instructions"
+              name="instructions"
+              accept=".pdf,.png,.jpg,.jpeg,.webp"
+            />
+
+            <div
+              class="file-name"
+              data-file-name="instructions"
+            >
+              No file selected
+            </div>
+
+          </div>
+
+
+          <!-- DECLARATION -->
+
+          <div class="upload-item">
+
+            <div class="upload-copy">
+
+              <strong>
+                Declaration of Conformity
+              </strong>
+
+              <span>
+                If applicable to the product
+              </span>
+
+            </div>
+
+
+            <label
+              class="upload-button"
+              for="declaration"
+            >
+              Choose file
+            </label>
+
+            <input
+              class="file-input"
+              type="file"
+              id="declaration"
+              name="declaration"
+              accept=".pdf,.png,.jpg,.jpeg,.webp"
+            />
+
+            <div
+              class="file-name"
+              data-file-name="declaration"
+            >
+              No file selected
+            </div>
+
+          </div>
+
+
+          <!-- TEST REPORT -->
+
+          <div class="upload-item">
+
+            <div class="upload-copy">
+
+              <strong>
+                Test report
+              </strong>
+
+              <span>
+                Laboratory or technical test documentation
+              </span>
+
+            </div>
+
+
+            <label
+              class="upload-button"
+              for="testReport"
+            >
+              Choose file
+            </label>
+
+            <input
+              class="file-input"
+              type="file"
+              id="testReport"
+              name="testReport"
+              accept=".pdf,.png,.jpg,.jpeg,.webp"
+            />
+
+            <div
+              class="file-name"
+              data-file-name="testReport"
+            >
+              No file selected
+            </div>
+
+          </div>
+
+
+          <!-- CERTIFICATE -->
+
+          <div class="upload-item">
+
+            <div class="upload-copy">
+
+              <strong>
+                Certificate
+              </strong>
+
+              <span>
+                Certification document, if applicable
+              </span>
+
+            </div>
+
+
+            <label
+              class="upload-button"
+              for="certificate"
+            >
+              Choose file
+            </label>
+
+            <input
+              class="file-input"
+              type="file"
+              id="certificate"
+              name="certificate"
+              accept=".pdf,.png,.jpg,.jpeg,.webp"
+            />
+
+            <div
+              class="file-name"
+              data-file-name="certificate"
+            >
+              No file selected
+            </div>
+
+          </div>
+
+
+          <!-- OTHER -->
+
+          <div class="upload-item">
+
+            <div class="upload-copy">
+
+              <strong>
+                Other compliance document
+              </strong>
+
+              <span>
+                Any other relevant evidence available
+              </span>
+
+            </div>
+
+
+            <label
+              class="upload-button"
+              for="otherDocument"
+            >
+              Choose file
+            </label>
+
+            <input
+              class="file-input"
+              type="file"
+              id="otherDocument"
+              name="otherDocument"
+              accept=".pdf,.png,.jpg,.jpeg,.webp"
+            />
+
+            <div
+              class="file-name"
+              data-file-name="otherDocument"
+            >
+              No file selected
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- NOTES -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span class="form-section-number">
+              3
+            </span>
+
+            <div>
+
+              <h2>
+                Additional context
+              </h2>
+
+              <p>
+                Optional information that may help explain
+                the product or available evidence.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="additionalNotes">
+              Notes
+            </label>
+
+            <textarea
+              id="additionalNotes"
+              name="additionalNotes"
+              placeholder="Anything LAUNCHGUARD should know about this product or the documents provided..."
+            ></textarea>
+
+          </div>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div
+          id="formMessage"
+          class="form-message hidden"
+          role="alert"
+        ></div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="form-actions">
+
+          <a
+            href="product-setup.html"
+            class="back-btn"
+          >
+            ← Back to Product Setup
+          </a>
+
+
+          <button
+            type="submit"
+            class="primary-btn continue-btn"
+            id="continueBtn"
+          >
+            Continue to Pre-Launch Check
+            <span>→</span>
+          </button>
+
+        </div>
+
+
+        <p class="form-security-note">
+          V0.1 validation: files currently remain in your browser
+          and are not uploaded to a remote server.
+        </p>
+
+      </form>
+
+    </div>
+
+  </main>
+
+
+  <script src="../js/listing-evidence.js"></script>
+
+</body>
+
+</html>

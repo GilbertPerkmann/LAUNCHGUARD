@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>
+    Risk Report — LAUNCHGUARD
+  </title>
+
+  <meta name="description" content="LAUNCHGUARD pre-launch risk report for Amazon products." />
+
+  <link rel="stylesheet" href="../styles.css" />
+
+  <link rel="stylesheet" href="../css/app.css" />
+</head>
+
+
+<body>
+
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
+  <header class="site-header">
+
+    <div class="container nav">
+
+      <a class="brand app-brand" href="/">
+
+        <div class="brand-mark">
+          LG
+        </div>
+
+        <div>
+
+          <div class="brand-name">
+            LAUNCHGUARD
+          </div>
+
+          <div class="brand-sub">
+            Amazon pre-launch risk check
+          </div>
+
+        </div>
+
+      </a>
+
+
+      <div class="app-step-indicator">
+        Step 4 of 4
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================== -->
+
+  <main class="app-main">
+
+    <div class="container app-container">
+
+
+      <!-- =====================================
+           PROGRESS
+      ====================================== -->
+
+      <div class="app-progress">
+
+        <div class="progress-item completed">
+
+          <div class="progress-number">
+            ✓
+          </div>
+
+          <div>
+
+            <strong>
+              Product
+            </strong>
+
+            <span>
+              Basic details
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="progress-line active-line"></div>
+
+
+        <div class="progress-item completed">
+
+          <div class="progress-number">
+            ✓
+          </div>
+
+          <div>
+
+            <strong>
+              Listing & Evidence
+            </strong>
+
+            <span>
+              Content & documents
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="progress-line active-line"></div>
+
+
+        <div class="progress-item completed">
+
+          <div class="progress-number">
+            ✓
+          </div>
+
+          <div>
+
+            <strong>
+              Check
+            </strong>
+
+            <span>
+              Pre-launch review
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="progress-line active-line"></div>
+
+
+        <div class="progress-item active">
+
+          <div class="progress-number">
+            4
+          </div>
+
+          <div>
+
+            <strong>
+              Report
+            </strong>
+
+            <span>
+              Launch decision
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================
+           REPORT HEADER
+      ====================================== -->
+
+      <section class="report-page-header">
+
+        <div>
+
+          <div class="eyebrow">
+            PRE-LAUNCH RISK REPORT
+          </div>
+
+          <h1 class="report-page-title" id="reportProductName">
+            —
+          </h1>
+
+          <p class="report-page-meta">
+
+            <span id="reportMarketplace">
+              —
+            </span>
+
+            <span class="meta-dot">
+              ·
+            </span>
+
+            <span id="reportCategory">
+              —
+            </span>
+
+          </p>
+
+        </div>
+
+
+        <div id="launchDecision" class="launch-decision not-ready">
+
+          <span class="decision-label">
+            LAUNCH DECISION
+          </span>
+
+          <strong id="decisionText">
+            NOT READY TO LAUNCH
+          </strong>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================
+           SUMMARY
+      ====================================== -->
+
+      <section class="report-summary-card">
+
+        <div class="report-count blocker">
+
+          <strong id="blockCount">
+            0
+          </strong>
+
+          <span>
+            Blockers
+          </span>
+
+        </div>
+
+
+        <div class="report-count verify">
+
+          <strong id="verifyCount">
+            0
+          </strong>
+
+          <span>
+            Verify
+          </span>
+
+        </div>
+
+
+        <div class="report-count pass">
+
+          <strong id="passCount">
+            0
+          </strong>
+
+          <span>
+            Passed
+          </span>
+
+        </div>
+
+
+        <div class="report-count missing">
+
+          <strong id="missingCount">
+            0
+          </strong>
+
+          <span>
+            Missing Data
+          </span>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================
+           VALIDATION NOTICE
+      ====================================== -->
+
+      <section class="validation-note">
+
+        <div class="validation-note-icon">
+          i
+        </div>
+
+        <div>
+
+          <strong>
+            Validation review
+          </strong>
+
+          <p>
+            LAUNCHGUARD V0.4 can inspect selected document-type signals, detect certain evidence mismatches and perform
+            limited cross-evidence consistency checks. The current validation version does not represent an automated
+            Amazon approval or a legal determination of regulatory compliance.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================
+           FINDINGS
+      ====================================== -->
+
+      <section class="findings-section">
+
+        <div class="findings-heading">
+
+          <div>
+
+            <span class="review-label">
+              FINDINGS
+            </span>
+
+            <h2>
+              What needs attention before launch
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <div id="findingsList" class="findings-list">
+        </div>
+
+      </section>
+
+
+      <!-- =====================================
+           VALIDATION FEEDBACK
+      ====================================== -->
+
+      <section class="report-feedback">
+
+        <div class="feedback-heading">
+
+          <span class="review-label">
+            VALIDATION
+          </span>
+
+          <h2>
+            What did you do because of this report?
+          </h2>
+
+          <p>
+            This helps us understand whether the report
+            actually changes launch behavior.
+          </p>
+
+        </div>
+
+
+        <div class="feedback-options" id="actionOptions">
+
+          <button type="button" class="feedback-option" data-action="changed_listing">
+            Changed my listing
+          </button>
+
+
+          <button type="button" class="feedback-option" data-action="changed_documentation">
+            Added / replaced documentation
+          </button>
+
+
+          <button type="button" class="feedback-option" data-action="changed_packaging">
+            Changed packaging / label
+          </button>
+
+
+          <button type="button" class="feedback-option" data-action="asked_expert">
+            Asked an expert
+          </button>
+
+
+          <button type="button" class="feedback-option" data-action="delayed_launch">
+            Delayed the launch
+          </button>
+
+
+          <button type="button" class="feedback-option" data-action="no_action">
+            No action
+          </button>
+
+        </div>
+
+
+        <div class="reuse-question">
+
+          <strong>
+            Would you use LAUNCHGUARD before your next launch?
+          </strong>
+
+
+          <div class="reuse-buttons">
+
+            <button type="button" class="reuse-btn" data-reuse="yes">
+              Yes
+            </button>
+
+
+            <button type="button" class="reuse-btn" data-reuse="no">
+              No
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================
+           BOTTOM ACTIONS
+      ====================================== -->
+
+      <div class="report-bottom-actions">
+
+        <a href="/screens/prelaunch-check.html" class="back-btn">
+          ← Back to check
+        </a>
+
+
+        <a href="/" class="primary-btn">
+          Start another check
+        </a>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- =========================================
+       SCRIPT
+  ========================================== -->
+
+  <script src="../js/risk-report.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <title>
+    Product Setup — LAUNCHGUARD
+  </title>
+
+  <meta
+    name="description"
+    content="Add your product information before running a LAUNCHGUARD Amazon pre-launch risk check."
+  />
+
+  <link
+    rel="stylesheet"
+    href="../styles.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="../css/app.css"
+  />
+</head>
+
+
+<body>
+
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
+  <header class="site-header">
+
+    <div class="container nav">
+
+      <a
+        class="brand app-brand"
+        href="../index.html"
+      >
+
+        <div class="brand-mark">
+          LG
+        </div>
+
+        <div>
+
+          <div class="brand-name">
+            LAUNCHGUARD
+          </div>
+
+          <div class="brand-sub">
+            Amazon pre-launch risk check
+          </div>
+
+        </div>
+
+      </a>
+
+
+      <div class="app-step-indicator">
+        Step 1 of 4
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================== -->
+
+  <main class="app-main">
+
+    <div class="container app-container">
+
+
+      <!-- =====================================
+           PROGRESS
+      ====================================== -->
+
+      <div class="app-progress">
+
+        <div class="progress-item active">
+
+          <div class="progress-number">
+            1
+          </div>
+
+          <div>
+            <strong>
+              Product
+            </strong>
+
+            <span>
+              Basic details
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="progress-line"></div>
+
+
+        <div class="progress-item">
+
+          <div class="progress-number">
+            2
+          </div>
+
+          <div>
+            <strong>
+              Listing & Evidence
+            </strong>
+
+            <span>
+              Content & documents
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="progress-line"></div>
+
+
+        <div class="progress-item">
+
+          <div class="progress-number">
+            3
+          </div>
+
+          <div>
+            <strong>
+              Check
+            </strong>
+
+            <span>
+              Pre-launch review
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="progress-line"></div>
+
+
+        <div class="progress-item">
+
+          <div class="progress-number">
+            4
+          </div>
+
+          <div>
+            <strong>
+              Report
+            </strong>
+
+            <span>
+              Launch decision
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================
+           PAGE HEADING
+      ====================================== -->
+
+      <div class="app-heading">
+
+        <div class="eyebrow">
+          PRODUCT SETUP
+        </div>
+
+        <h1 class="app-title">
+          Tell us what you plan to launch.
+        </h1>
+
+        <p class="app-lead">
+          Add the basic product information LAUNCHGUARD
+          needs to determine which checks may be relevant.
+        </p>
+
+      </div>
+
+
+      <!-- =====================================
+           FORM
+      ====================================== -->
+
+      <form
+        id="productSetupForm"
+        class="setup-card"
+        novalidate
+      >
+
+
+        <!-- PRODUCT NAME -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span class="form-section-number">
+              1
+            </span>
+
+            <div>
+
+              <h2>
+                Product
+              </h2>
+
+              <p>
+                Start with the product you intend to launch.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="productName">
+              Product name
+              <span class="required">*</span>
+            </label>
+
+            <input
+              type="text"
+              id="productName"
+              name="productName"
+              placeholder="e.g. 100W USB-C Laptop Charger"
+              autocomplete="off"
+              required
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- MARKET -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span class="form-section-number">
+              2
+            </span>
+
+            <div>
+
+              <h2>
+                Marketplace
+              </h2>
+
+              <p>
+                Requirements can differ by marketplace
+                and destination country.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-grid two-columns">
+
+
+            <div class="form-field">
+
+              <label for="marketplace">
+                Amazon marketplace
+                <span class="required">*</span>
+              </label>
+
+              <select
+                id="marketplace"
+                name="marketplace"
+                required
+              >
+
+                <option value="">
+                  Select marketplace
+                </option>
+
+                <option value="amazon-de">
+                  Amazon.de
+                </option>
+
+                <option value="amazon-it">
+                  Amazon.it
+                </option>
+
+                <option value="amazon-fr">
+                  Amazon.fr
+                </option>
+
+                <option value="amazon-es">
+                  Amazon.es
+                </option>
+
+                <option value="amazon-nl">
+                  Amazon.nl
+                </option>
+
+                <option value="amazon-pl">
+                  Amazon.pl
+                </option>
+
+                <option value="amazon-se">
+                  Amazon.se
+                </option>
+
+                <option value="amazon-be">
+                  Amazon.com.be
+                </option>
+
+                <option value="amazon-uk">
+                  Amazon.co.uk
+                </option>
+
+                <option value="amazon-us">
+                  Amazon.com
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="manufacturerCountry">
+                Manufacturer country
+                <span class="required">*</span>
+              </label>
+
+              <select
+                id="manufacturerCountry"
+                name="manufacturerCountry"
+                required
+              >
+
+                <option value="">
+                  Select country
+                </option>
+
+                <option value="Germany">
+                  Germany
+                </option>
+
+                <option value="Italy">
+                  Italy
+                </option>
+
+                <option value="France">
+                  France
+                </option>
+
+                <option value="Spain">
+                  Spain
+                </option>
+
+                <option value="Netherlands">
+                  Netherlands
+                </option>
+
+                <option value="Poland">
+                  Poland
+                </option>
+
+                <option value="United Kingdom">
+                  United Kingdom
+                </option>
+
+                <option value="United States">
+                  United States
+                </option>
+
+                <option value="China">
+                  China
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- CATEGORY -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span class="form-section-number">
+              3
+            </span>
+
+            <div>
+
+              <h2>
+                Product category
+              </h2>
+
+              <p>
+                This helps determine which risk paths
+                may need to be checked.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="category">
+              Category
+              <span class="required">*</span>
+            </label>
+
+            <select
+              id="category"
+              name="category"
+              required
+            >
+
+              <option value="">
+                Select product category
+              </option>
+
+              <option value="electronics">
+                Electronics
+              </option>
+
+              <option value="electrical-equipment">
+                Electrical equipment
+              </option>
+
+              <option value="supplements">
+                Food supplements
+              </option>
+
+              <option value="food">
+                Food
+              </option>
+
+              <option value="cosmetics">
+                Cosmetics / Beauty
+              </option>
+
+              <option value="toys">
+                Toys
+              </option>
+
+              <option value="baby">
+                Baby products
+              </option>
+
+              <option value="household">
+                Household products
+              </option>
+
+              <option value="sports">
+                Sports & Outdoors
+              </option>
+
+              <option value="tools">
+                Tools & Home Improvement
+              </option>
+
+              <option value="other">
+                Other
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- CUSTOMER TYPE -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span class="form-section-number">
+              4
+            </span>
+
+            <div>
+
+              <h2>
+                Intended customer
+              </h2>
+
+              <p>
+                Tell us who the product is primarily
+                intended for.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="choice-grid">
+
+            <label class="choice-card">
+
+              <input
+                type="radio"
+                name="customerType"
+                value="consumer"
+                required
+              />
+
+              <span class="choice-content">
+
+                <strong>
+                  Consumer
+                </strong>
+
+                <small>
+                  Sold primarily to end consumers.
+                </small>
+
+              </span>
+
+            </label>
+
+
+            <label class="choice-card">
+
+              <input
+                type="radio"
+                name="customerType"
+                value="b2b"
+              />
+
+              <span class="choice-content">
+
+                <strong>
+                  B2B
+                </strong>
+
+                <small>
+                  Sold primarily for professional use.
+                </small>
+
+              </span>
+
+            </label>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT CHARACTERISTICS -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span class="form-section-number">
+              5
+            </span>
+
+            <div>
+
+              <h2>
+                Product characteristics
+              </h2>
+
+              <p>
+                These answers help LAUNCHGUARD determine
+                which additional checks may be relevant.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- ELECTRICAL -->
+
+          <div class="question-row">
+
+            <div>
+
+              <strong>
+                Is the product electrical?
+              </strong>
+
+              <p>
+                Powered by electricity or designed
+                to connect to electrical equipment.
+              </p>
+
+            </div>
+
+
+            <div class="yes-no-group">
+
+              <label>
+
+                <input
+                  type="radio"
+                  name="electrical"
+                  value="yes"
+                  required
+                />
+
+                <span>
+                  Yes
+                </span>
+
+              </label>
+
+
+              <label>
+
+                <input
+                  type="radio"
+                  name="electrical"
+                  value="no"
+                />
+
+                <span>
+                  No
+                </span>
+
+              </label>
+
+            </div>
+
+          </div>
+
+
+          <!-- BATTERY -->
+
+          <div class="question-row">
+
+            <div>
+
+              <strong>
+                Does it contain or use a battery?
+              </strong>
+
+              <p>
+                Built-in, removable or supplied battery.
+              </p>
+
+            </div>
+
+
+            <div class="yes-no-group">
+
+              <label>
+
+                <input
+                  type="radio"
+                  name="battery"
+                  value="yes"
+                  required
+                />
+
+                <span>
+                  Yes
+                </span>
+
+              </label>
+
+
+              <label>
+
+                <input
+                  type="radio"
+                  name="battery"
+                  value="no"
+                />
+
+                <span>
+                  No
+                </span>
+
+              </label>
+
+            </div>
+
+          </div>
+
+
+          <!-- WIRELESS -->
+
+          <div class="question-row">
+
+            <div>
+
+              <strong>
+                Does it use wireless technology?
+              </strong>
+
+              <p>
+                For example Wi-Fi, Bluetooth,
+                NFC or another radio technology.
+              </p>
+
+            </div>
+
+
+            <div class="yes-no-group">
+
+              <label>
+
+                <input
+                  type="radio"
+                  name="wireless"
+                  value="yes"
+                  required
+                />
+
+                <span>
+                  Yes
+                </span>
+
+              </label>
+
+
+              <label>
+
+                <input
+                  type="radio"
+                  name="wireless"
+                  value="no"
+                />
+
+                <span>
+                  No
+                </span>
+
+              </label>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================
+             FORM MESSAGE
+        ====================================== -->
+
+        <div
+          id="formMessage"
+          class="form-message hidden"
+          role="alert"
+        ></div>
+
+
+        <!-- =====================================
+             ACTIONS
+        ====================================== -->
+
+        <div class="form-actions">
+
+          <a
+            href="../index.html"
+            class="back-btn"
+          >
+            ← Back
+          </a>
+
+
+          <button
+            type="submit"
+            class="primary-btn continue-btn"
+            id="continueBtn"
+          >
+            Continue to Listing & Evidence
+            <span>→</span>
+          </button>
+
+        </div>
+
+
+        <p class="form-security-note">
+          Only provide information you are authorized
+          to share. Document upload comes in the next step.
+        </p>
+
+      </form>
+
+    </div>
+
+  </main>
+
+
+  <script src="../js/product-setup.js"></script>
+
+</body>
+
+</html>
