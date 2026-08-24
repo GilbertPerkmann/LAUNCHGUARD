@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.6
+// LAUNCHGUARD V0.7
 // LOCAL MVP SERVER
 //
 // DOCUMENT ANALYSIS:
@@ -15,6 +15,7 @@
 // - wattage consistency
 // - manufacturer-country / origin consistency
 // - model-number consistency: Product label <-> Declaration of Conformity
+// - model-number consistency: Product label <-> Test report
 //
 // IMPORTANT:
 // This is a pre-launch risk signal system.
@@ -4042,6 +4043,77 @@ function normalizeModelNumber(
 // MODEL NUMBER EXTRACTION
 // ==================================================
 
+function isPlausibleModelNumber(
+  value
+) {
+
+  const normalized =
+    normalizeModelNumber(
+      value
+    );
+
+
+  if (
+    !normalized ||
+    normalized.length < 3 ||
+    normalized.length > 80
+  ) {
+
+    return false;
+
+  }
+
+
+  const reservedWords =
+    new Set([
+      "MODEL",
+      "NUMBER",
+      "NO",
+      "PRODUCT",
+      "REPORT",
+      "TEST",
+      "SAMPLE",
+      "RESULT",
+      "PASS",
+      "FAIL",
+      "LABORATORY",
+      "STANDARD"
+    ]);
+
+
+  if (
+    reservedWords.has(
+      normalized
+    )
+  ) {
+
+    return false;
+
+  }
+
+
+  /*
+    A useful model identifier should normally contain
+    at least one digit. This prevents headings such as
+    MODEL or PRODUCT from being accepted as identifiers.
+  */
+
+  if (
+    !/\d/.test(
+      normalized
+    )
+  ) {
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
+
+
 function extractModelNumber(
   text
 ) {
@@ -4059,7 +4131,7 @@ function extractModelNumber(
         "Model number",
 
       regex:
-        /\bmodel\s+number\s*[:#]?\s*([a-z0-9][a-z0-9._/-]{2,})/i
+        /\bmodel\s+number\s*[:#]?\s*(?:\n\s*)?([a-z0-9][a-z0-9._\/-]{2,})/i
     },
 
     {
@@ -4067,7 +4139,7 @@ function extractModelNumber(
         "Model no.",
 
       regex:
-        /\bmodel\s+no\.?\s*[:#]?\s*([a-z0-9][a-z0-9._/-]{2,})/i
+        /\bmodel\s+no\.?\s*[:#]?\s*(?:\n\s*)?([a-z0-9][a-z0-9._\/-]{2,})/i
     },
 
     {
@@ -4075,7 +4147,15 @@ function extractModelNumber(
         "Model",
 
       regex:
-        /\bmodel\s*[:#]\s*([a-z0-9][a-z0-9._/-]{2,})/i
+        /\bmodel\s*[:#]\s*(?:\n\s*)?([a-z0-9][a-z0-9._\/-]{2,})/i
+    },
+
+    {
+      label:
+        "Sample tested",
+
+      regex:
+        /\bsample\s+tested\s*[:#]?\s*(?:\n\s*)?([a-z0-9][a-z0-9._\/-]{2,})/i
     }
 
   ];
@@ -4098,6 +4178,7 @@ function extractModelNumber(
     ) {
 
       continue;
+
     }
 
 
@@ -4115,11 +4196,13 @@ function extractModelNumber(
 
 
     if (
-      normalizedValue.length <
-      3
+      !isPlausibleModelNumber(
+        normalizedValue
+      )
     ) {
 
       continue;
+
     }
 
 
@@ -4424,6 +4507,248 @@ function analyzeModelNumberConsistency(
 
 }
 
+
+
+// ==================================================
+// TEST REPORT MODEL NUMBER CONSISTENCY
+// PRODUCT LABEL <-> TEST REPORT
+// ==================================================
+
+function analyzeTestReportModelNumberConsistency(
+  productLabelAnalysis,
+  productLabelText,
+  testReportAnalysis,
+  testReportText
+) {
+
+  if (
+    !productLabelAnalysis ||
+    !testReportAnalysis
+  ) {
+
+    return {
+
+      status:
+        "NOT_EVALUATED",
+
+      confidence:
+        "LOW",
+
+      productLabelModel:
+        null,
+
+      testReportModel:
+        null,
+
+      reason:
+        "Test-report model-number consistency could not be evaluated because both the Product label and Test report are required."
+
+    };
+
+  }
+
+
+  if (
+    productLabelAnalysis.status !==
+      "LIKELY_MATCH"
+  ) {
+
+    return {
+
+      status:
+        "NOT_EVALUATED",
+
+      confidence:
+        "LOW",
+
+      productLabelModel:
+        null,
+
+      testReportModel:
+        null,
+
+      reason:
+        "Test-report model-number consistency was not evaluated because the Product label was not reliably classified."
+
+    };
+
+  }
+
+
+  if (
+    testReportAnalysis.status !==
+      "LIKELY_MATCH"
+  ) {
+
+    return {
+
+      status:
+        "NOT_EVALUATED",
+
+      confidence:
+        "LOW",
+
+      productLabelModel:
+        null,
+
+      testReportModel:
+        null,
+
+      reason:
+        "Test-report model-number consistency was not evaluated because the uploaded Test report was not reliably classified."
+
+    };
+
+  }
+
+
+  const productLabelResult =
+    extractModelNumber(
+      productLabelText
+    );
+
+
+  const testReportResult =
+    extractModelNumber(
+      testReportText
+    );
+
+
+  if (
+    !productLabelResult.value
+  ) {
+
+    return {
+
+      status:
+        "VERIFY",
+
+      confidence:
+        "LOW",
+
+      productLabelModel:
+        null,
+
+      testReportModel:
+        testReportResult.value,
+
+      productLabelRawValue:
+        productLabelResult.rawValue,
+
+      testReportRawValue:
+        testReportResult.rawValue,
+
+      reason:
+        "No sufficiently clear model number could be identified on the Product label."
+
+    };
+
+  }
+
+
+  if (
+    !testReportResult.value
+  ) {
+
+    return {
+
+      status:
+        "VERIFY",
+
+      confidence:
+        "LOW",
+
+      productLabelModel:
+        productLabelResult.value,
+
+      testReportModel:
+        null,
+
+      productLabelRawValue:
+        productLabelResult.rawValue,
+
+      testReportRawValue:
+        testReportResult.rawValue,
+
+      reason:
+        "No sufficiently clear model number could be identified in the Test report."
+
+    };
+
+  }
+
+
+  if (
+    productLabelResult.value ===
+    testReportResult.value
+  ) {
+
+    return {
+
+      status:
+        "CONSISTENT",
+
+      confidence:
+        "HIGH",
+
+      productLabelModel:
+        productLabelResult.value,
+
+      testReportModel:
+        testReportResult.value,
+
+      productLabelRawValue:
+        productLabelResult.rawValue,
+
+      testReportRawValue:
+        testReportResult.rawValue,
+
+      productLabelSource:
+        productLabelResult.source,
+
+      testReportSource:
+        testReportResult.source,
+
+      reason:
+        `The model number on the Product label (${productLabelResult.value}) matches the model number identified in the Test report (${testReportResult.value}).`
+
+    };
+
+  }
+
+
+  return {
+
+    status:
+      "MISMATCH",
+
+    confidence:
+      "HIGH",
+
+    productLabelModel:
+      productLabelResult.value,
+
+    testReportModel:
+      testReportResult.value,
+
+    productLabelRawValue:
+      productLabelResult.rawValue,
+
+    testReportRawValue:
+      testReportResult.rawValue,
+
+    productLabelSource:
+      productLabelResult.source,
+
+    testReportSource:
+      testReportResult.source,
+
+    reason:
+      `The Product label identifies model ${productLabelResult.value}, while the Test report identifies model ${testReportResult.value}.`
+
+  };
+
+}
 
 // ==================================================
 // ANALYZE STORED FILE
@@ -4853,6 +5178,11 @@ app.post(
         null;
 
 
+      const testReport =
+        storedFiles.testReport ||
+        null;
+
+
       if (
         productLabel
       ) {
@@ -5006,6 +5336,86 @@ app.post(
       }
 
 
+
+
+      // =================================================
+      // TEST REPORT MODEL NUMBER
+      // PRODUCT LABEL <-> TEST REPORT
+      // =================================================
+
+      if (
+        productLabel &&
+        testReport
+      ) {
+
+        const testReportModelNumber =
+          analyzeTestReportModelNumberConsistency(
+
+            productLabel
+              .documentTypeAnalysis,
+
+            productLabel
+              .extractedText ||
+              "",
+
+            testReport
+              .documentTypeAnalysis,
+
+            testReport
+              .extractedText ||
+              ""
+
+          );
+
+
+        consistencyAnalysis.testReportModelNumber =
+          testReportModelNumber;
+
+
+        if (
+          !productLabel
+            .documentTypeAnalysis
+            .contentConsistency
+        ) {
+
+          productLabel
+            .documentTypeAnalysis
+            .contentConsistency =
+            {};
+
+        }
+
+
+        productLabel
+          .documentTypeAnalysis
+          .contentConsistency
+          .testReportModelNumber =
+            testReportModelNumber;
+
+
+        if (
+          !testReport
+            .documentTypeAnalysis
+            .contentConsistency
+        ) {
+
+          testReport
+            .documentTypeAnalysis
+            .contentConsistency =
+            {};
+
+        }
+
+
+        testReport
+          .documentTypeAnalysis
+          .contentConsistency
+          .modelNumber =
+            testReportModelNumber;
+
+      }
+
+
       // =================================================
       // REMOVE FULL EXTRACTED TEXT
       // =================================================
@@ -5038,7 +5448,7 @@ app.post(
           "MANUAL_VALIDATION",
 
         analysisVersion:
-          "0.6.0-model-number-consistency",
+          "0.7.0-test-report-model-consistency",
 
         product:
           product,
@@ -5221,6 +5631,35 @@ modelNumberConsistency:
         confidence:
           consistencyAnalysis
             .modelNumber
+            .confidence
+
+      }
+    : null
+,
+
+
+testReportModelNumberConsistency:
+  consistencyAnalysis.testReportModelNumber
+    ? {
+
+        status:
+          consistencyAnalysis
+            .testReportModelNumber
+            .status,
+
+        productLabel:
+          consistencyAnalysis
+            .testReportModelNumber
+            .productLabelModel,
+
+        testReport:
+          consistencyAnalysis
+            .testReportModelNumber
+            .testReportModel,
+
+        confidence:
+          consistencyAnalysis
+            .testReportModelNumber
             .confidence
 
       }
@@ -5442,7 +5881,7 @@ app.get(
         "LAUNCHGUARD",
 
       version:
-        "0.6.0",
+        "0.7.0",
 
       documentAnalysis:
         true,
@@ -5458,7 +5897,8 @@ app.get(
     consistencyChecks: [
   "WATTAGE",
   "MANUFACTURER_COUNTRY",
-  "MODEL_NUMBER"
+  "MODEL_NUMBER",
+  "TEST_REPORT_MODEL_NUMBER"
 ]
 
     });
@@ -5581,7 +6021,7 @@ app.listen(
 
 
    console.log(
-  "LAUNCHGUARD V0.6"
+  "LAUNCHGUARD V0.7"
 );
 
 
@@ -5632,6 +6072,11 @@ app.listen(
 
   console.log(
   "Consistency check: MODEL NUMBER ENABLED"
+);
+
+
+  console.log(
+  "Consistency check: TEST REPORT MODEL NUMBER ENABLED"
 );
 
     console.log(

@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.6
+// LAUNCHGUARD V0.7
 // RISK REPORT
 //
 // Uses:
@@ -10,6 +10,7 @@
 // - wattage consistency analysis
 // - manufacturer-country consistency analysis
 // - model-number consistency analysis
+// - test-report model-number consistency analysis
 // - PASS / VERIFY / BLOCK / INSUFFICIENT DATA
 // ==================================================
 
@@ -399,6 +400,33 @@ function getModelNumberConsistency(
     analysis
       .contentConsistency
       .modelNumber
+  );
+
+}
+
+
+function getTestReportModelNumberConsistency(
+  file
+) {
+
+  const analysis =
+    getDocumentAnalysis(
+      file
+    );
+
+  if (
+    !analysis ||
+    !analysis.contentConsistency ||
+    !analysis.contentConsistency.testReportModelNumber
+  ) {
+
+    return null;
+  }
+
+  return (
+    analysis
+      .contentConsistency
+      .testReportModelNumber
   );
 
 }
@@ -1111,6 +1139,120 @@ function buildModelNumberFinding(
 }
 
 
+
+// ==================================================
+// TEST REPORT MODEL NUMBER FINDING
+// ==================================================
+
+function buildTestReportModelNumberFinding(
+  productLabel
+) {
+
+  if (!productLabel) {
+    return null;
+  }
+
+  const analysis =
+    getTestReportModelNumberConsistency(
+      productLabel
+    );
+
+  if (!analysis) {
+    return null;
+  }
+
+  if (
+    analysis.status ===
+    "NOT_EVALUATED"
+  ) {
+    return null;
+  }
+
+  const productLabelModel =
+    analysis.productLabelModel;
+
+  const testReportModel =
+    analysis.testReportModel;
+
+  if (
+    analysis.status ===
+    "CONSISTENT"
+  ) {
+
+    return createFinding(
+      "PASS",
+      "Test report model number is consistent",
+      "The model number identified on the Product label matches the model number identified in the Test report.",
+      `Product label: ${productLabelModel} · Test report: ${testReportModel}`,
+      "No model-number correction is required between the Product label and Test report.",
+      {
+        detailType:
+          "TEST_REPORT_MODEL_NUMBER_CONSISTENCY",
+        result:
+          analysis.status,
+        confidence:
+          analysis.confidence,
+        productLabelModel:
+          productLabelModel,
+        testReportModel:
+          testReportModel
+      }
+    );
+
+  }
+
+  if (
+    analysis.status ===
+    "MISMATCH"
+  ) {
+
+    return createFinding(
+      "BLOCK",
+      "Test report model number mismatch",
+      analysis.reason ||
+        "The Product label and Test report identify different model numbers.",
+      `Product label: ${productLabelModel} · Test report: ${testReportModel}`,
+      "Verify which model number is correct and align the Product label and Test report before launch.",
+      {
+        detailType:
+          "TEST_REPORT_MODEL_NUMBER_CONSISTENCY",
+        result:
+          analysis.status,
+        confidence:
+          analysis.confidence,
+        productLabelModel:
+          productLabelModel,
+        testReportModel:
+          testReportModel
+      }
+    );
+
+  }
+
+  return createFinding(
+    "VERIFY",
+    "Test report model number requires verification",
+    analysis.reason ||
+      "LAUNCHGUARD could not make a reliable model-number comparison between the Product label and Test report.",
+    `Product label: ${productLabelModel || "not identified"} · Test report: ${testReportModel || "not identified"}`,
+    "Verify the model number on the Product label and in the Test report.",
+    {
+      detailType:
+        "TEST_REPORT_MODEL_NUMBER_CONSISTENCY",
+      result:
+        analysis.status,
+      confidence:
+        analysis.confidence,
+      productLabelModel:
+        productLabelModel,
+      testReportModel:
+        testReportModel
+    }
+  );
+
+}
+
+
 // ==================================================
 // BUILD FINDINGS
 // ==================================================
@@ -1343,6 +1485,23 @@ function buildFindings(
       )
     );
 
+    const testReportModelNumberFinding =
+      buildTestReportModelNumberFinding(
+        evidence.productLabel
+      );
+
+
+    if (
+      testReportModelNumberFinding
+    ) {
+
+      findings.push(
+        testReportModelNumberFinding
+      );
+
+    }
+
+
   }
 
 
@@ -1447,9 +1606,9 @@ function buildFindings(
 
       "VERIFY",
 
-      "Manual V0.6 compliance review still required",
+      "Manual V0.7 compliance review still required",
 
-      "The current validation version can inspect document-type signals and perform limited wattage, manufacturer-country and model-number consistency checks, but it does not yet perform a complete automated compliance determination.",
+      "The current validation version can inspect document-type signals and perform limited wattage, manufacturer-country, Declaration model-number and Test report model-number consistency checks, but it does not yet perform a complete automated compliance determination.",
 
       "Review mode: MANUAL_VALIDATION",
 
@@ -1731,6 +1890,72 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.declarationModel ||
+              "—"
+            )}
+          </strong>
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+
+  // =================================================
+  // TEST REPORT MODEL NUMBER
+  // =================================================
+
+  if (
+    details.detailType ===
+    "TEST_REPORT_MODEL_NUMBER_CONSISTENCY"
+  ) {
+
+    return `
+
+      <div class="finding-row">
+
+        <span>
+          CONSISTENCY ANALYSIS
+        </span>
+
+        <p>
+
+          Result:
+          <strong>
+            ${escapeHtml(
+              details.result ||
+              "—"
+            )}
+          </strong>
+
+          <br>
+
+          Confidence:
+          <strong>
+            ${escapeHtml(
+              details.confidence ||
+              "—"
+            )}
+          </strong>
+
+          <br>
+
+          Product label:
+          <strong>
+            ${escapeHtml(
+              details.productLabelModel ||
+              "—"
+            )}
+          </strong>
+
+          <br>
+
+          Test report:
+          <strong>
+            ${escapeHtml(
+              details.testReportModel ||
               "—"
             )}
           </strong>

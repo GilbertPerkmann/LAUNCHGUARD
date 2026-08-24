@@ -1,0 +1,28 @@
+TEST REPORT
+
+Laboratory:
+LaunchGuard Test Laboratory
+
+Report Number:
+TR-2026-100W-001
+
+Product:
+100W USB-C Laptop Charger
+
+Model:
+Model:
+LG-65W-1C
+
+Test Standard:
+EN 62368-1
+
+Test Result:
+PASS
+
+Sample tested:
+LG-65W-1C
+
+Date:
+2026-08-24
+
+TEST DOCUMENT — NOT FOR COMMERCIAL USE
