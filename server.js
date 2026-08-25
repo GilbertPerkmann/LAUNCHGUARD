@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.8
+// LAUNCHGUARD V0.9.1
 // LOCAL MVP SERVER
 //
 // DOCUMENT ANALYSIS:
@@ -31,6 +31,86 @@ const path = require("path");
 const crypto = require("crypto");
 
 const pdfParse = require("pdf-parse");
+
+// V0.9 PDF fallback parser.
+// pdfjs-dist is loaded dynamically only when pdf-parse fails or returns no useful text.
+async function extractPdfTextWithPdfJs(buffer) {
+
+  const pdfjsLib =
+    await import(
+      "pdfjs-dist/legacy/build/pdf.mjs"
+    );
+
+  const loadingTask =
+    pdfjsLib.getDocument({
+      data:
+        new Uint8Array(buffer),
+
+      disableFontFace:
+        true,
+
+      useSystemFonts:
+        false,
+
+      verbosity:
+        0
+    });
+
+
+  const pdf =
+    await loadingTask.promise;
+
+
+  const pages =
+    [];
+
+
+  for (
+    let pageNumber = 1;
+    pageNumber <= pdf.numPages;
+    pageNumber += 1
+  ) {
+
+    const page =
+      await pdf.getPage(
+        pageNumber
+      );
+
+
+    const content =
+      await page.getTextContent();
+
+
+    const pageText =
+      content.items
+        .map(
+          item =>
+            typeof item.str === "string"
+              ? item.str
+              : ""
+        )
+        .filter(
+          Boolean
+        )
+        .join(
+          " "
+        );
+
+
+    pages.push(
+      pageText
+    );
+
+  }
+
+
+  return normalizeText(
+    pages.join(
+      "\n\n"
+    )
+  );
+
+}
 
 
 // ==================================================
@@ -1847,7 +1927,8 @@ const DOCUMENT_TYPE_RULES = {
 async function extractDocumentText(
   filePath,
   mimeType,
-  originalName = ""
+  originalName = "",
+  fieldName = ""
 ) {
 
   const extension =
@@ -1870,13 +1951,103 @@ async function extractDocumentText(
       ".pdf"
   ) {
 
-    try {
+    const buffer =
+      fs.readFileSync(
+        filePath
+      );
 
-      const buffer =
-        fs.readFileSync(
-          filePath
+
+    // =================================================
+    // V0.9.1 TEST REPORT PARSER
+    // Force pdfjs-dist for Test report PDFs.
+    // This isolates a pdf-parse issue observed where a
+    // Test report returned the previously parsed PDF text.
+    // =================================================
+
+    if (
+      fieldName ===
+        "testReport"
+    ) {
+
+      try {
+
+        const testReportText =
+          await extractPdfTextWithPdfJs(
+            buffer
+          );
+
+
+        if (
+          testReportText.length >=
+            30
+        ) {
+
+          console.log(
+            "LAUNCHGUARD_TEST_REPORT_PDFJS_SUCCESS",
+            {
+              filePath:
+                filePath,
+
+              characterCount:
+                testReportText.length
+            }
+          );
+
+
+          return {
+
+            supported:
+              true,
+
+            reason:
+              null,
+
+            method:
+              "PDF_TEXT_EXTRACTION_PDFJS_TEST_REPORT",
+
+            text:
+              testReportText
+
+          };
+
+        }
+
+
+        console.warn(
+          "LAUNCHGUARD_TEST_REPORT_PDFJS_EMPTY",
+          {
+            filePath:
+              filePath,
+
+            characterCount:
+              testReportText.length
+          }
         );
 
+
+      } catch (testReportPdfError) {
+
+        console.warn(
+          "LAUNCHGUARD_TEST_REPORT_PDFJS_FAILED",
+          {
+            filePath:
+              filePath,
+
+            message:
+              testReportPdfError.message
+          }
+        );
+
+      }
+
+    }
+
+
+    // =================================================
+    // PRIMARY PDF PARSER: pdf-parse
+    // =================================================
+
+    try {
 
       const result =
         await pdfParse(
@@ -1890,24 +2061,136 @@ async function extractDocumentText(
         );
 
 
+      if (
+        text.length >=
+          30
+      ) {
+
+        return {
+
+          supported:
+            true,
+
+          reason:
+            null,
+
+          method:
+            "PDF_TEXT_EXTRACTION_PDF_PARSE",
+
+          text:
+            text
+
+        };
+
+      }
+
+
+      console.warn(
+        "LAUNCHGUARD_PDF_PRIMARY_EMPTY",
+        {
+          filePath:
+            filePath,
+
+          characterCount:
+            text.length
+        }
+      );
+
+
+    } catch (primaryError) {
+
+      console.warn(
+        "LAUNCHGUARD_PDF_PRIMARY_FAILED",
+        {
+          filePath:
+            filePath,
+
+          message:
+            primaryError.message
+        }
+      );
+
+    }
+
+
+    // =================================================
+    // FALLBACK PDF PARSER: pdfjs-dist
+    // =================================================
+
+    try {
+
+      const fallbackText =
+        await extractPdfTextWithPdfJs(
+          buffer
+        );
+
+
+      if (
+        fallbackText.length >=
+          30
+      ) {
+
+        console.log(
+          "LAUNCHGUARD_PDF_FALLBACK_SUCCESS",
+          {
+            filePath:
+              filePath,
+
+            characterCount:
+              fallbackText.length
+          }
+        );
+
+
+        return {
+
+          supported:
+            true,
+
+          reason:
+            null,
+
+          method:
+            "PDF_TEXT_EXTRACTION_PDFJS_FALLBACK",
+
+          text:
+            fallbackText
+
+        };
+
+      }
+
+
+      console.warn(
+        "LAUNCHGUARD_PDF_FALLBACK_EMPTY",
+        {
+          filePath:
+            filePath,
+
+          characterCount:
+            fallbackText.length
+        }
+      );
+
+
       return {
 
         supported:
-          true,
+          false,
 
         reason:
-          null,
+          "PDF_NO_READABLE_TEXT",
 
         method:
-          "PDF_TEXT_EXTRACTION",
+          "PDF_TEXT_EXTRACTION_PDFJS_FALLBACK",
 
         text:
-          text
+          ""
 
       };
 
 
-    } catch (error) {
+    } catch (fallbackError) {
 
       console.error(
         "LAUNCHGUARD_PDF_EXTRACTION_ERROR",
@@ -1916,7 +2199,7 @@ async function extractDocumentText(
             filePath,
 
           message:
-            error.message
+            fallbackError.message
         }
       );
 
@@ -1930,7 +2213,7 @@ async function extractDocumentText(
           "PDF_EXTRACTION_FAILED",
 
         method:
-          "PDF_TEXT_EXTRACTION",
+          "PDF_TEXT_EXTRACTION_PRIMARY_AND_FALLBACK_FAILED",
 
         text:
           ""
@@ -5161,7 +5444,8 @@ async function analyzeStoredFile(
     await extractDocumentText(
       finalPath,
       file.mimetype,
-      file.originalname
+      file.originalname,
+      fieldName
     );
 
 
@@ -5919,7 +6203,7 @@ app.post(
           "MANUAL_VALIDATION",
 
         analysisVersion:
-          "0.8.0-standard-consistency",
+          "0.9.1-test-report-pdfjs",
 
         product:
           product,
@@ -6386,7 +6670,7 @@ app.get(
         "LAUNCHGUARD",
 
       version:
-        "0.8.0",
+        "0.9.1",
 
       documentAnalysis:
         true,
@@ -6527,7 +6811,7 @@ app.listen(
 
 
    console.log(
-  "LAUNCHGUARD V0.8"
+  "LAUNCHGUARD V0.9.1"
 );
 
 
@@ -6557,7 +6841,7 @@ app.listen(
 
 
     console.log(
-      "Text extraction: PDF + TXT"
+      "Text extraction: PDF (primary + fallback; Test report via pdfjs) + TXT"
     );
 
 

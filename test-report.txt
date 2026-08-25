@@ -10,7 +10,6 @@ Product:
 100W USB-C Laptop Charger
 
 Model:
-Model:
 LG-65W-1C
 
 Test Standard:
