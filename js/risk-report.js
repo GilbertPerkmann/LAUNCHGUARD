@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.8
+// LAUNCHGUARD V0.9.1
 // RISK REPORT
 //
 // Uses:
@@ -1804,7 +1804,7 @@ function buildFindings(
 
       "VERIFY",
 
-      "Manual V0.8 compliance review still required",
+      "Manual V0.9.1 compliance review still required",
 
       "The current validation version can inspect document-type signals and perform limited wattage, manufacturer-country, Declaration model-number, Test report model-number and EN-standard consistency checks, but it does not yet perform a complete automated compliance determination.",
 

@@ -367,6 +367,33 @@ function isValidCheckId(
 // SAFE FILE NAME
 // ==================================================
 
+function fixUploadedFileName(
+  fileName
+) {
+
+  return String(
+    fileName || ""
+  )
+    .replace(
+      /â/g,
+      "–"
+    )
+    .replace(
+      /â/g,
+      "—"
+    )
+    .replace(
+      /â/g,
+      "’"
+    )
+    .replace(
+      /â|â/g,
+      '"'
+    );
+
+}
+
+
 function createSafeFileName(
   originalName
 ) {
@@ -5513,8 +5540,10 @@ async function analyzeStoredFile(
 
   return {
 
-    originalName:
-      file.originalname,
+   originalName:
+  fixUploadedFileName(
+    file.originalname
+  ),
 
     storedName:
       file.filename,
