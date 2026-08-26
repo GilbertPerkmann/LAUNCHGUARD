@@ -1,7 +1,7 @@
-"use strict";
+﻿"use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.10
+// LAUNCHGUARD V0.11
 // LOCAL MVP SERVER
 //
 // DOCUMENT ANALYSIS:
@@ -375,19 +375,19 @@ function fixUploadedFileName(
     fileName || ""
   )
     .replace(
-      /â/g,
-      "–"
+      /Ã¢Â€Â“/g,
+      "â€“"
     )
     .replace(
-      /â/g,
-      "—"
+      /Ã¢Â€Â”/g,
+      "â€”"
     )
     .replace(
-      /â/g,
-      "’"
+      /Ã¢Â€Â™/g,
+      "â€™"
     )
     .replace(
-      /â|â/g,
+      /Ã¢Â€Âœ|Ã¢Â€Â/g,
       '"'
     );
 
@@ -708,7 +708,7 @@ const DOCUMENT_TYPE_RULES = {
           "Electrical input specification",
 
         regex:
-          /\binput\s*:?\s*\d{2,3}\s*[-–]\s*\d{2,3}\s*v/i,
+          /\binput\s*:?\s*\d{2,3}\s*[-â€“]\s*\d{2,3}\s*v/i,
 
         weight:
           6
@@ -1985,7 +1985,7 @@ async function extractDocumentText(
 
 
     // =================================================
-    // V0.10 TEST REPORT PARSER
+    // V0.11 TEST REPORT PARSER
     // Force pdfjs-dist for Test report PDFs.
     // This isolates a pdf-parse issue observed where a
     // Test report returned the previously parsed PDF text.
@@ -3902,7 +3902,7 @@ function normalizeCountry(
     "spain":
       "Spain",
 
-    "españa":
+    "espaÃ±a":
       "Spain",
 
 
@@ -4005,7 +4005,7 @@ function extractLabelOriginCountry(
         "Spain",
 
       regex:
-        /\bmade\s+in\s+(?:spain|españa)\b/i
+        /\bmade\s+in\s+(?:spain|espaÃ±a)\b/i
     },
 
     {
@@ -6498,6 +6498,25 @@ app.post(
 
 
       // =================================================
+      // SUBMISSION ACCESS TOKEN
+      // =================================================
+      // Return the raw token once to the submitting client.
+      // Persist only its SHA-256 hash.
+
+      const accessToken =
+        crypto
+          .randomBytes(32)
+          .toString("hex");
+
+
+      const accessTokenHash =
+        crypto
+          .createHash("sha256")
+          .update(accessToken)
+          .digest("hex");
+
+
+      // =================================================
       // SUBMISSION
       // =================================================
 
@@ -6506,6 +6525,9 @@ app.post(
         checkId:
           checkId,
 
+        accessTokenHash:
+          accessTokenHash,
+
         status:
           "SUBMITTED_FOR_REVIEW",
 
@@ -6513,7 +6535,7 @@ app.post(
           "MANUAL_VALIDATION",
 
         analysisVersion:
-          "0.10-packaging-model-number",
+          "0.11-secure-submission-access",
 
         product:
           product,
@@ -6809,6 +6831,9 @@ app.post(
           checkId:
             checkId,
 
+          accessToken:
+            accessToken,
+
           status:
             submission.status,
 
@@ -6863,9 +6888,9 @@ app.post(
 // Submission data can contain confidential product,
 // listing and compliance information.
 //
-// Public retrieval is intentionally disabled.
-// The current MVP does not require clients to read
-// stored submissions directly.
+// Retrieval requires the access token returned by
+// POST /api/submissions. Only the SHA-256 token hash
+// is stored with the submission.
 // ==================================================
 
 app.get(
@@ -6876,33 +6901,228 @@ app.get(
     res
   ) => {
 
-    console.warn(
-      "LAUNCHGUARD_SUBMISSION_READ_BLOCKED",
-      {
-        checkId:
-          String(
-            req.params.checkId ||
-            ""
-          )
-            .trim()
-            .toUpperCase()
+    try {
+
+      const checkId =
+        String(
+          req.params.checkId ||
+          ""
+        )
+          .trim()
+          .toUpperCase();
+
+
+      if (
+        !isValidCheckId(
+          checkId
+        )
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            ok: false,
+            error: "Invalid check ID."
+          });
+
       }
-    );
 
 
-    return res
-      .status(
-        403
-      )
-      .json({
+      const authorization =
+        String(
+          req.get("authorization") ||
+          ""
+        )
+          .trim();
 
-        ok:
-          false,
 
-        error:
-          "Public submission access is disabled."
+      const bearerMatch =
+        authorization.match(
+          /^Bearer\s+([a-f0-9]{64})$/i
+        );
 
+
+      if (
+        !bearerMatch
+      ) {
+
+        return res
+          .status(401)
+          .json({
+            ok: false,
+            error: "Submission access token is required."
+          });
+
+      }
+
+
+      const dataFile =
+        path.join(
+          DATA_DIR,
+          `${checkId}.json`
+        );
+
+
+      if (
+        !fs.existsSync(
+          dataFile
+        )
+      ) {
+
+        return res
+          .status(404)
+          .json({
+            ok: false,
+            error: "Submission not found."
+          });
+
+      }
+
+
+      let submission =
+        null;
+
+
+      try {
+
+        submission =
+          JSON.parse(
+            fs.readFileSync(
+              dataFile,
+              "utf8"
+            )
+          );
+
+      } catch (
+        readError
+      ) {
+
+        console.error(
+          "LAUNCHGUARD_SUBMISSION_READ_ERROR",
+          {
+            checkId: checkId,
+            message: readError.message
+          }
+        );
+
+
+        return res
+          .status(500)
+          .json({
+            ok: false,
+            error: "Submission could not be loaded."
+          });
+
+      }
+
+
+      const storedHash =
+        String(
+          submission.accessTokenHash ||
+          ""
+        );
+
+
+      if (
+        !/^[a-f0-9]{64}$/i.test(
+          storedHash
+        )
+      ) {
+
+        return res
+          .status(403)
+          .json({
+            ok: false,
+            error: "Submission access denied."
+          });
+
+      }
+
+
+      const providedHash =
+        crypto
+          .createHash("sha256")
+          .update(bearerMatch[1])
+          .digest("hex");
+
+
+      const storedBuffer =
+        Buffer.from(
+          storedHash,
+          "hex"
+        );
+
+
+      const providedBuffer =
+        Buffer.from(
+          providedHash,
+          "hex"
+        );
+
+
+      const tokenMatches =
+        storedBuffer.length ===
+          providedBuffer.length &&
+        crypto.timingSafeEqual(
+          storedBuffer,
+          providedBuffer
+        );
+
+
+      if (
+        !tokenMatches
+      ) {
+
+        console.warn(
+          "LAUNCHGUARD_SUBMISSION_ACCESS_DENIED",
+          {
+            checkId: checkId
+          }
+        );
+
+
+        return res
+          .status(403)
+          .json({
+            ok: false,
+            error: "Submission access denied."
+          });
+
+      }
+
+
+      const clientSubmission = {
+        ...submission
+      };
+
+
+      delete clientSubmission.accessTokenHash;
+
+
+      return res.json({
+        ok: true,
+        submission: clientSubmission
       });
+
+
+    } catch (
+      error
+    ) {
+
+      console.error(
+        "LAUNCHGUARD_SUBMISSION_READ_ERROR",
+        error
+      );
+
+
+      return res
+        .status(500)
+        .json({
+          ok: false,
+          error: "Submission could not be loaded."
+        });
+
+    }
 
   }
 );
@@ -6929,7 +7149,7 @@ app.get(
 
         
       version:
-        "0.10",
+        "0.11",
 
       documentAnalysis:
         true,
@@ -7358,7 +7578,7 @@ app.listen(
 
 
     console.log(
-      "LAUNCHGUARD V0.10"
+      "LAUNCHGUARD V0.11"
     );
 
 

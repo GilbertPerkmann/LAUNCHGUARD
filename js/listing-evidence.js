@@ -1,9 +1,11 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.1
+// LAUNCHGUARD V0.11
 // LISTING + EVIDENCE
-// REAL LOCAL BACKEND SUBMISSION
+// SECURE BACKEND SUBMISSION
+// Stores the per-submission access token locally so
+// the next screen can retrieve only this submission.
 // ==================================================
 
 const form =
@@ -551,6 +553,18 @@ async function submitToBackend(
   }
 
 
+  if (
+    !result.checkId ||
+    !result.accessToken
+  ) {
+
+    throw new Error(
+      "The server did not return the required secure submission credentials."
+    );
+
+  }
+
+
   return result;
 }
 
@@ -561,6 +575,7 @@ async function submitToBackend(
 
 function createLocalCheckRecord(
   checkId,
+  accessToken,
   productData,
   listingData,
   evidence
@@ -570,6 +585,9 @@ function createLocalCheckRecord(
 
     checkId:
       checkId,
+
+    accessToken:
+      accessToken,
 
     status:
       "SUBMITTED_FOR_REVIEW",
@@ -713,13 +731,34 @@ form.addEventListener(
 
       console.log(
         "LAUNCHGUARD_BACKEND_SUBMISSION_SUCCESS",
-        result
+        {
+          ok:
+            result.ok,
+
+          checkId:
+            result.checkId,
+
+          status:
+            result.status,
+
+          analysisVersion:
+            result.analysisVersion,
+
+          fileCount:
+            result.fileCount,
+
+          accessTokenReceived:
+            Boolean(
+              result.accessToken
+            )
+        }
       );
 
 
       const checkRecord =
         createLocalCheckRecord(
           result.checkId,
+          result.accessToken,
           productData,
           listingData,
           evidence
@@ -740,8 +779,14 @@ form.addEventListener(
           checkId:
             result.checkId,
 
+          accessToken:
+            result.accessToken,
+
           status:
             result.status,
+
+          analysisVersion:
+            result.analysisVersion || null,
 
           submittedAt:
             new Date().toISOString()

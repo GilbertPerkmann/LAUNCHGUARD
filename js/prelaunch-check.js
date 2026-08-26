@@ -1,9 +1,9 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.1
+// LAUNCHGUARD V0.11
 // PRE-LAUNCH CHECK
-// SERVER-BACKED SUBMISSION
+// SECURE SERVER-BACKED SUBMISSION
 // ==================================================
 
 const runCheckBtn =
@@ -208,10 +208,10 @@ function showError(message) {
 
 
 // ==================================================
-// GET BACKEND CHECK ID
+// GET BACKEND SUBMISSION CREDENTIALS
 // ==================================================
 
-function getBackendCheckId() {
+function getBackendSubmissionCredentials() {
 
   const backendSubmission =
     readLocalData(
@@ -221,14 +221,21 @@ function getBackendCheckId() {
 
   if (
     !backendSubmission ||
-    !backendSubmission.checkId
+    !backendSubmission.checkId ||
+    !backendSubmission.accessToken
   ) {
 
     return null;
   }
 
 
-  return backendSubmission.checkId;
+  return {
+    checkId:
+      backendSubmission.checkId,
+
+    accessToken:
+      backendSubmission.accessToken
+  };
 }
 
 
@@ -237,12 +244,40 @@ function getBackendCheckId() {
 // ==================================================
 
 async function fetchSubmission(
-  checkId
+  checkId,
+  accessToken
 ) {
+
+  if (
+    !checkId ||
+    !accessToken
+  ) {
+
+    throw new Error(
+      "Secure submission credentials are missing."
+    );
+
+  }
+
 
   const response =
     await fetch(
-      `/api/submissions/${encodeURIComponent(checkId)}`
+      `/api/submissions/${encodeURIComponent(checkId)}`,
+      {
+        method:
+          "GET",
+
+        headers: {
+          Authorization:
+            `Bearer ${accessToken}`,
+
+          Accept:
+            "application/json"
+        },
+
+        cache:
+          "no-store"
+      }
     );
 
 
@@ -654,11 +689,9 @@ function createReportInput(
     reviewMode:
       submission.reviewMode,
 
-
-
-  analysisVersion:
-    submission.analysisVersion ||
-    "unknown",
+    analysisVersion:
+      submission.analysisVersion ||
+      "unknown",
 
     product:
       submission.product,
@@ -735,14 +768,14 @@ function runPreLaunchCheck() {
 
 async function initialize() {
 
-  const checkId =
-    getBackendCheckId();
+  const credentials =
+    getBackendSubmissionCredentials();
 
 
-  if (!checkId) {
+  if (!credentials) {
 
     showError(
-      "No server submission was found. Please return to Listing & Evidence and submit the product again."
+      "Secure submission credentials are missing. Please return to Listing & Evidence and submit the product again."
     );
 
 
@@ -763,7 +796,8 @@ async function initialize() {
 
     const submission =
       await fetchSubmission(
-        checkId
+        credentials.checkId,
+        credentials.accessToken
       );
 
 
@@ -773,7 +807,21 @@ async function initialize() {
 
     console.log(
       "LAUNCHGUARD_SERVER_SUBMISSION_LOADED",
-      submission
+      {
+        checkId:
+          submission.checkId,
+
+        status:
+          submission.status,
+
+        analysisVersion:
+          submission.analysisVersion,
+
+        fileCount:
+          Object.keys(
+            submission.files || {}
+          ).length
+      }
     );
 
 
