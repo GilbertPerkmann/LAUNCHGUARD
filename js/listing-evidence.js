@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.11
+// LAUNCHGUARD V0.12
 // LISTING + EVIDENCE
 // SECURE BACKEND SUBMISSION
 // Stores the per-submission access token locally so

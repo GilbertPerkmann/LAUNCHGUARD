@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.11
+// LAUNCHGUARD V0.12
 // RISK REPORT
 //
 // Uses:
@@ -378,6 +378,32 @@ function getManufacturerCountryConsistency(
 
 }
 
+
+function getManufacturerIdentityConsistency(
+  file
+) {
+
+  const analysis =
+    getDocumentAnalysis(
+      file
+    );
+
+  if (
+    !analysis ||
+    !analysis.contentConsistency ||
+    !analysis.contentConsistency.manufacturerIdentity
+  ) {
+
+    return null;
+  }
+
+  return (
+    analysis
+      .contentConsistency
+      .manufacturerIdentity
+  );
+
+}
 
 function getModelNumberConsistency(
   file
@@ -1031,6 +1057,183 @@ function buildManufacturerCountryFinding(
 
 }
 
+
+
+// ==================================================
+// MANUFACTURER IDENTITY FINDING
+// ==================================================
+
+function buildManufacturerIdentityFinding(
+  productLabel
+) {
+
+  if (!productLabel) {
+    return null;
+  }
+
+
+  const analysis =
+    getManufacturerIdentityConsistency(
+      productLabel
+    );
+
+
+  if (!analysis) {
+    return null;
+  }
+
+
+  if (
+    analysis.status ===
+    "NOT_EVALUATED"
+  ) {
+
+    return null;
+  }
+
+
+  const identifiedManufacturers =
+    Array.isArray(
+      analysis.manufacturers
+    )
+      ? analysis.manufacturers.filter(
+          item =>
+            item &&
+            item.manufacturer
+        )
+      : [];
+
+
+  const evidenceText =
+    identifiedManufacturers.length
+      ? identifiedManufacturers
+          .map(
+            item =>
+              `${item.label}: ${item.rawValue || item.manufacturer}`
+          )
+          .join(" · ")
+      : "Manufacturer identity could not be reliably identified across the uploaded evidence.";
+
+
+  if (
+    analysis.status ===
+    "CONSISTENT"
+  ) {
+
+    return createFinding(
+
+      "PASS",
+
+      "Manufacturer identity is consistent",
+
+      analysis.reason ||
+        "The identified manufacturer is consistent across the uploaded evidence documents.",
+
+      evidenceText,
+
+      "No manufacturer-identity correction is required for this consistency check.",
+
+      {
+
+        detailType:
+          "MANUFACTURER_IDENTITY_CONSISTENCY",
+
+        result:
+          analysis.status,
+
+        confidence:
+          analysis.confidence,
+
+        manufacturer:
+          analysis.manufacturer,
+
+        manufacturers:
+          analysis.manufacturers
+
+      }
+
+    );
+
+  }
+
+
+  if (
+    analysis.status ===
+    "MISMATCH"
+  ) {
+
+    return createFinding(
+
+      "BLOCK",
+
+      "Manufacturer identity mismatch",
+
+      analysis.reason ||
+        "Different manufacturer identities were identified across the uploaded evidence documents.",
+
+      evidenceText,
+
+      "Verify the correct manufacturer identity and align the affected evidence documents before launch.",
+
+      {
+
+        detailType:
+          "MANUFACTURER_IDENTITY_CONSISTENCY",
+
+        result:
+          analysis.status,
+
+        confidence:
+          analysis.confidence,
+
+        manufacturer:
+          analysis.manufacturer,
+
+        manufacturers:
+          analysis.manufacturers
+
+      }
+
+    );
+
+  }
+
+
+  return createFinding(
+
+    "VERIFY",
+
+    "Manufacturer identity requires verification",
+
+    analysis.reason ||
+      "LAUNCHGUARD could not make a reliable manufacturer-identity comparison.",
+
+    evidenceText,
+
+    "Verify the manufacturer identity across the available product evidence before launch.",
+
+    {
+
+      detailType:
+        "MANUFACTURER_IDENTITY_CONSISTENCY",
+
+      result:
+        analysis.status,
+
+      confidence:
+        analysis.confidence,
+
+      manufacturer:
+        analysis.manufacturer,
+
+      manufacturers:
+        analysis.manufacturers
+
+    }
+
+  );
+
+}
 
 // ==================================================
 // MODEL NUMBER FINDING
@@ -1752,6 +1955,27 @@ function buildFindings(
   }
 
 
+
+  // =================================================
+  // MANUFACTURER IDENTITY
+  // =================================================
+
+  const manufacturerIdentityFinding =
+    buildManufacturerIdentityFinding(
+      evidence.productLabel
+    );
+
+
+  if (
+    manufacturerIdentityFinding
+  ) {
+
+    findings.push(
+      manufacturerIdentityFinding
+    );
+
+  }
+
   // =================================================
   // PACKAGING
   // =================================================
@@ -2003,7 +2227,7 @@ findings.push(
 
     "VERIFY",
 
-    "Manual V0.11 compliance review still required",
+    "Manual V0.12 compliance review still required",
 
     "The current validation version can inspect document-type signals and perform limited wattage, manufacturer-country, Declaration model-number, Test report model-number and EN-standard consistency checks, but it does not yet perform a complete automated compliance determination.",
 

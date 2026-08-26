@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.11
+// LAUNCHGUARD V0.12
 // PRE-LAUNCH CHECK
 // SECURE SERVER-BACKED SUBMISSION
 // ==================================================

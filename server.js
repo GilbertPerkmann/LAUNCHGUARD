@@ -1,7 +1,7 @@
-﻿"use strict";
+"use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.11
+// LAUNCHGUARD V0.12
 // LOCAL MVP SERVER
 //
 // DOCUMENT ANALYSIS:
@@ -4328,7 +4328,462 @@ function analyzeManufacturerCountryConsistency(
 
 }
 
+// ==================================================
+// V0.12 MANUFACTURER IDENTITY NORMALIZATION
+// ==================================================
 
+function normalizeManufacturerIdentity(
+  value
+) {
+
+  return String(
+    value || ""
+  )
+    .normalize("NFKC")
+    .toUpperCase()
+    .replace(
+      /&/g,
+      " AND "
+    )
+    .replace(
+      /[^A-Z0-9]+/g,
+      " "
+    )
+    .replace(
+      /\s+/g,
+      " "
+    )
+    .trim();
+
+}
+
+
+// ==================================================
+// V0.12 MANUFACTURER IDENTITY VALIDATION
+// ==================================================
+
+function isPlausibleManufacturerIdentity(
+  value
+) {
+
+  const normalized =
+    normalizeManufacturerIdentity(
+      value
+    );
+
+
+  if (
+    !normalized ||
+    normalized.length < 2 ||
+    normalized.length > 160
+  ) {
+
+    return false;
+
+  }
+
+
+  const reservedValues =
+    new Set([
+      "MANUFACTURER",
+      "MANUFACTURER NAME",
+      "MANUFACTURED BY",
+      "COMPANY",
+      "COMPANY NAME",
+      "SUPPLIER",
+      "APPLICANT",
+      "CLIENT",
+      "CUSTOMER",
+      "PRODUCT",
+      "MODEL",
+      "TEST REPORT",
+      "DECLARATION OF CONFORMITY"
+    ]);
+
+
+  if (
+    reservedValues.has(
+      normalized
+    )
+  ) {
+
+    return false;
+
+  }
+
+
+  if (
+    !/[A-Z]/.test(
+      normalized
+    )
+  ) {
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
+
+
+// ==================================================
+// V0.12 MANUFACTURER IDENTITY EXTRACTION
+// ==================================================
+
+function extractManufacturerIdentity(
+  text
+) {
+
+  const normalized =
+    normalizeText(
+      text
+    );
+
+
+  const patterns = [
+
+    {
+      label:
+        "Manufacturer",
+
+      regex:
+        /\bmanufacturer\s*(?:name)?\s*[:#]\s*([^\n\r]{2,160})/i
+    },
+
+    {
+      label:
+        "Manufactured by",
+
+      regex:
+        /\bmanufactured\s+by\s*[:#]?\s*([^\n\r]{2,160})/i
+    },
+
+    {
+      label:
+        "Manufacturer company",
+
+      regex:
+        /\bmanufacturer\s+company\s*[:#]?\s*([^\n\r]{2,160})/i
+    }
+
+  ];
+
+
+  for (
+    const pattern
+    of patterns
+  ) {
+
+    const match =
+      normalized.match(
+        pattern.regex
+      );
+
+
+    if (
+      !match ||
+      !match[1]
+    ) {
+
+      continue;
+
+    }
+
+
+    const rawValue =
+      String(
+        match[1]
+      )
+        .trim()
+        .replace(
+          /\s{2,}.*/,
+          ""
+        )
+        .replace(
+          /[;,]\s*(?:address|model|country|made\s+in)\b.*$/i,
+          ""
+        )
+        .trim();
+
+
+    const normalizedValue =
+      normalizeManufacturerIdentity(
+        rawValue
+      );
+
+
+    if (
+      !isPlausibleManufacturerIdentity(
+        normalizedValue
+      )
+    ) {
+
+      continue;
+
+    }
+
+
+    return {
+
+      value:
+        normalizedValue,
+
+      rawValue:
+        rawValue,
+
+      source:
+        pattern.label
+
+    };
+
+  }
+
+
+  return {
+
+    value:
+      null,
+
+    rawValue:
+      null,
+
+    source:
+      "NOT_FOUND"
+
+  };
+
+}
+
+
+// ==================================================
+// V0.12 MANUFACTURER IDENTITY CONSISTENCY
+// PRODUCT LABEL <-> DECLARATION <-> TEST REPORT
+// <-> PACKAGING
+// ==================================================
+
+function analyzeManufacturerIdentityConsistency(
+  productLabelAnalysis,
+  productLabelText,
+  declarationAnalysis,
+  declarationText,
+  testReportAnalysis,
+  testReportText,
+  packagingAnalysis,
+  packagingText
+) {
+
+  const documents = [];
+
+
+  const candidates = [
+
+    {
+      key:
+        "productLabel",
+
+      label:
+        "Product label",
+
+      analysis:
+        productLabelAnalysis,
+
+      text:
+        productLabelText
+    },
+
+    {
+      key:
+        "declaration",
+
+      label:
+        "Declaration of Conformity",
+
+      analysis:
+        declarationAnalysis,
+
+      text:
+        declarationText
+    },
+
+    {
+      key:
+        "testReport",
+
+      label:
+        "Test report",
+
+      analysis:
+        testReportAnalysis,
+
+      text:
+        testReportText
+    },
+
+    {
+      key:
+        "packaging",
+
+      label:
+        "Packaging",
+
+      analysis:
+        packagingAnalysis,
+
+      text:
+        packagingText
+    }
+
+  ];
+
+
+  for (
+    const candidate
+    of candidates
+  ) {
+
+    if (
+      !candidate.analysis ||
+      candidate.analysis.status !==
+        "LIKELY_MATCH"
+    ) {
+
+      continue;
+
+    }
+
+
+    const result =
+      extractManufacturerIdentity(
+        candidate.text ||
+        ""
+      );
+
+
+    documents.push({
+
+      key:
+        candidate.key,
+
+      label:
+        candidate.label,
+
+      manufacturer:
+        result.value,
+
+      rawValue:
+        result.rawValue,
+
+      source:
+        result.source
+
+    });
+
+  }
+
+
+  const identified =
+    documents.filter(
+      document =>
+        Boolean(
+          document.manufacturer
+        )
+    );
+
+
+  // =================================================
+  // INSUFFICIENT COMPARABLE EVIDENCE
+  // =================================================
+
+  if (
+    identified.length < 2
+  ) {
+
+    return {
+
+      status:
+        "VERIFY",
+
+      confidence:
+        "LOW",
+
+      manufacturers:
+        documents,
+
+      reason:
+        "Manufacturer identity could not be reliably compared because fewer than two uploaded evidence documents contained a sufficiently clear manufacturer identity."
+
+    };
+
+  }
+
+
+  const uniqueManufacturers =
+    [
+      ...new Set(
+        identified.map(
+          document =>
+            document.manufacturer
+        )
+      )
+    ];
+
+
+  // =================================================
+  // CONSISTENT
+  // =================================================
+
+  if (
+    uniqueManufacturers.length === 1
+  ) {
+
+    return {
+
+      status:
+        "CONSISTENT",
+
+      confidence:
+        "HIGH",
+
+      manufacturer:
+        uniqueManufacturers[0],
+
+      manufacturers:
+        documents,
+
+      reason:
+        `The manufacturer identity is consistent across ${identified.length} uploaded evidence documents.`
+
+    };
+
+  }
+
+
+  // =================================================
+  // MISMATCH
+  // =================================================
+
+  return {
+
+    status:
+      "MISMATCH",
+
+    confidence:
+      "HIGH",
+
+    manufacturers:
+      documents,
+
+    uniqueManufacturers:
+      uniqueManufacturers,
+
+    reason:
+      "Different manufacturer identities were identified across the uploaded evidence documents."
+
+  };
+
+}
 // ==================================================
 // MODEL NUMBER NORMALIZATION
 // ==================================================
@@ -6481,6 +6936,100 @@ app.post(
       }
 
 
+            // =================================================
+      // V0.12 MANUFACTURER IDENTITY CONSISTENCY
+      // PRODUCT LABEL <-> DECLARATION <-> TEST REPORT
+      // <-> PACKAGING
+      // =================================================
+
+      const manufacturerIdentity =
+        analyzeManufacturerIdentityConsistency(
+
+          productLabel
+            ? productLabel.documentTypeAnalysis
+            : null,
+
+          productLabel
+            ? productLabel.extractedText || ""
+            : "",
+
+          declaration
+            ? declaration.documentTypeAnalysis
+            : null,
+
+          declaration
+            ? declaration.extractedText || ""
+            : "",
+
+          testReport
+            ? testReport.documentTypeAnalysis
+            : null,
+
+          testReport
+            ? testReport.extractedText || ""
+            : "",
+
+          packaging
+            ? packaging.documentTypeAnalysis
+            : null,
+
+          packaging
+            ? packaging.extractedText || ""
+            : ""
+
+        );
+
+
+      consistencyAnalysis.manufacturerIdentity =
+        manufacturerIdentity;
+
+
+      // =================================================
+      // ATTACH RESULT TO AVAILABLE DOCUMENTS
+      // =================================================
+
+      for (
+        const document
+        of [
+          productLabel,
+          declaration,
+          testReport,
+          packaging
+        ]
+      ) {
+
+        if (
+          !document ||
+          !document.documentTypeAnalysis
+        ) {
+
+          continue;
+
+        }
+
+
+        if (
+          !document
+            .documentTypeAnalysis
+            .contentConsistency
+        ) {
+
+          document
+            .documentTypeAnalysis
+            .contentConsistency =
+            {};
+
+        }
+
+
+        document
+          .documentTypeAnalysis
+          .contentConsistency
+          .manufacturerIdentity =
+          manufacturerIdentity;
+
+      }
+
       // =================================================
       // REMOVE FULL EXTRACTED TEXT
       // =================================================
@@ -6534,8 +7083,8 @@ app.post(
         reviewMode:
           "MANUAL_VALIDATION",
 
-        analysisVersion:
-          "0.11-secure-submission-access",
+     analysisVersion:
+  "0.12-manufacturer-identity",
 
         product:
           product,
@@ -7578,7 +8127,7 @@ app.listen(
 
 
     console.log(
-      "LAUNCHGUARD V0.11"
+      "LAUNCHGUARD V0.12"
     );
 
 
