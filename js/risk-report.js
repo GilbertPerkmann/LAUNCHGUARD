@@ -136,7 +136,7 @@ function formatMarketplace(
   return (
     marketplaces[value] ||
     value ||
-    "â€”"
+    "—"
   );
 
 }
@@ -186,7 +186,7 @@ function formatCategory(
   return (
     categories[value] ||
     value ||
-    "â€”"
+    "—"
   );
 
 }
@@ -752,7 +752,7 @@ function buildWattageFinding(
 
       "The primary wattage stated in the planned product/listing matches the primary wattage identified on the Product label.",
 
-      `Product / listing: ${listingValue}W Â· Product label: ${labelValue}W`,
+      `Product / listing: ${listingValue}W · Product label: ${labelValue}W`,
 
       "No wattage correction is required for this consistency check.",
 
@@ -794,7 +794,7 @@ function buildWattageFinding(
       analysis.reason ||
         "The planned listing and Product label indicate different power ratings.",
 
-      `Product / listing: ${listingValue}W Â· Product label: ${labelValue}W`,
+      `Product / listing: ${listingValue}W · Product label: ${labelValue}W`,
 
       "Verify the correct product power rating and align the product, listing and Product label before launch.",
 
@@ -835,7 +835,7 @@ function buildWattageFinding(
       listingValue !== null
         ? `${listingValue}W`
         : "not identified"
-    } Â· Product label: ${
+    } · Product label: ${
       labelValue !== null
         ? `${labelValue}W`
         : "not identified"
@@ -921,7 +921,7 @@ function buildManufacturerCountryFinding(
 
       "The manufacturer country entered in Product Setup matches the Made in country identified on the Product label.",
 
-      `Product Setup: ${setupCountry} Â· Product label: ${labelCountry}`,
+      `Product Setup: ${setupCountry} · Product label: ${labelCountry}`,
 
       "No manufacturer-country correction is required for this consistency check.",
 
@@ -963,7 +963,7 @@ function buildManufacturerCountryFinding(
       analysis.reason ||
         "The manufacturer country entered in Product Setup does not match the Made in country identified on the Product label.",
 
-      `Product Setup: ${setupCountry} Â· Product label: ${labelCountry}`,
+      `Product Setup: ${setupCountry} · Product label: ${labelCountry}`,
 
       "Verify the correct manufacturer/origin country and align Product Setup and the Product label before launch.",
 
@@ -1002,7 +1002,7 @@ function buildManufacturerCountryFinding(
 
     `Product Setup: ${
       setupCountry || "not identified"
-    } Â· Product label: ${
+    } · Product label: ${
       labelCountry || "not identified"
     }`,
 
@@ -1086,7 +1086,7 @@ function buildModelNumberFinding(
 
       "The model number identified on the Product label matches the model number identified in the Declaration of Conformity.",
 
-      `Product label: ${productLabelModel} Â· Declaration of Conformity: ${declarationModel}`,
+      `Product label: ${productLabelModel} · Declaration of Conformity: ${declarationModel}`,
 
       "No model-number correction is required for this consistency check.",
 
@@ -1128,7 +1128,7 @@ function buildModelNumberFinding(
       analysis.reason ||
         "The Product label and Declaration of Conformity identify different model numbers.",
 
-      `Product label: ${productLabelModel} Â· Declaration of Conformity: ${declarationModel}`,
+      `Product label: ${productLabelModel} · Declaration of Conformity: ${declarationModel}`,
 
       "Verify which model number is correct and align the Product label and Declaration of Conformity before launch.",
 
@@ -1165,7 +1165,7 @@ function buildModelNumberFinding(
     analysis.reason ||
       "LAUNCHGUARD could not make a reliable model-number comparison.",
 
-    `Product label: ${productLabelModel || "not identified"} Â· Declaration of Conformity: ${declarationModel || "not identified"}`,
+    `Product label: ${productLabelModel || "not identified"} · Declaration of Conformity: ${declarationModel || "not identified"}`,
 
     "Verify the model number on the Product label and in the Declaration of Conformity.",
 
@@ -1247,7 +1247,7 @@ function buildPackagingModelNumberFinding(
 
       "The model number identified on the Product label matches the model number identified on the Packaging.",
 
-      `Product label: ${productLabelModel} Â· Packaging: ${packagingModel}`,
+      `Product label: ${productLabelModel} · Packaging: ${packagingModel}`,
 
       "No model-number correction is required between the Product label and Packaging.",
 
@@ -1289,7 +1289,7 @@ function buildPackagingModelNumberFinding(
       analysis.reason ||
         "The Product label and Packaging identify different model numbers.",
 
-      `Product label: ${productLabelModel} Â· Packaging: ${packagingModel}`,
+      `Product label: ${productLabelModel} · Packaging: ${packagingModel}`,
 
       "Verify which model number is correct and align the Product label and Packaging before launch.",
 
@@ -1326,7 +1326,7 @@ function buildPackagingModelNumberFinding(
     analysis.reason ||
       "LAUNCHGUARD could not make a reliable model-number comparison between the Product label and Packaging.",
 
-    `Product label: ${productLabelModel || "not identified"} Â· Packaging: ${packagingModel || "not identified"}`,
+    `Product label: ${productLabelModel || "not identified"} · Packaging: ${packagingModel || "not identified"}`,
 
     "Verify the model number on the Product label and Packaging.",
 
@@ -1396,7 +1396,7 @@ function buildTestReportModelNumberFinding(
       "PASS",
       "Test report model number is consistent",
       "The model number identified on the Product label matches the model number identified in the Test report.",
-      `Product label: ${productLabelModel} Â· Test report: ${testReportModel}`,
+      `Product label: ${productLabelModel} · Test report: ${testReportModel}`,
       "No model-number correction is required between the Product label and Test report.",
       {
         detailType:
@@ -1424,7 +1424,7 @@ function buildTestReportModelNumberFinding(
       "Test report model number mismatch",
       analysis.reason ||
         "The Product label and Test report identify different model numbers.",
-      `Product label: ${productLabelModel} Â· Test report: ${testReportModel}`,
+      `Product label: ${productLabelModel} · Test report: ${testReportModel}`,
       "Verify which model number is correct and align the Product label and Test report before launch.",
       {
         detailType:
@@ -1447,7 +1447,7 @@ function buildTestReportModelNumberFinding(
     "Test report model number requires verification",
     analysis.reason ||
       "LAUNCHGUARD could not make a reliable model-number comparison between the Product label and Test report.",
-    `Product label: ${productLabelModel || "not identified"} Â· Test report: ${testReportModel || "not identified"}`,
+    `Product label: ${productLabelModel || "not identified"} · Test report: ${testReportModel || "not identified"}`,
     "Verify the model number on the Product label and in the Test report.",
     {
       detailType:
@@ -1542,7 +1542,7 @@ function buildStandardConsistencyFinding(
       "PASS",
       "Referenced EN standard is consistent",
       "At least one EN standard identified in the Declaration of Conformity is also identified in the Test report.",
-      `Declaration of Conformity: ${declarationText} Â· Test report: ${testReportText}`,
+      `Declaration of Conformity: ${declarationText} · Test report: ${testReportText}`,
       "No EN-standard correction is required for this consistency check.",
       {
         detailType:
@@ -1572,7 +1572,7 @@ function buildStandardConsistencyFinding(
       "Referenced EN standard mismatch",
       analysis.reason ||
         "The Declaration of Conformity and Test report reference different EN standards.",
-      `Declaration of Conformity: ${declarationText} Â· Test report: ${testReportText}`,
+      `Declaration of Conformity: ${declarationText} · Test report: ${testReportText}`,
       "Verify which EN standards apply to the product and align the Declaration of Conformity and Test report before launch.",
       {
         detailType:
@@ -1597,7 +1597,7 @@ function buildStandardConsistencyFinding(
     "Referenced EN standards require verification",
     analysis.reason ||
       "LAUNCHGUARD could not make a reliable EN-standard comparison between the Declaration of Conformity and Test report.",
-    `Declaration of Conformity: ${declarationText} Â· Test report: ${testReportText}`,
+    `Declaration of Conformity: ${declarationText} · Test report: ${testReportText}`,
     "Verify the applicable EN standards in the Declaration of Conformity and Test report.",
     {
       detailType:
@@ -2117,7 +2117,7 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.result ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2127,7 +2127,7 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.confidence ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2141,7 +2141,7 @@ function createAnalysisDetailsHtml(
                 ? escapeHtml(
                     `${details.listingValue}W`
                   )
-                : "â€”"
+                : "—"
             }
           </strong>
 
@@ -2155,7 +2155,7 @@ function createAnalysisDetailsHtml(
                 ? escapeHtml(
                     `${details.labelValue}W`
                   )
-                : "â€”"
+                : "—"
             }
           </strong>
 
@@ -2191,7 +2191,7 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.result ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2201,7 +2201,7 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.confidence ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2211,7 +2211,7 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.setupCountry ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2221,7 +2221,7 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.labelCountry ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2257,7 +2257,7 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.result ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2267,7 +2267,7 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.confidence ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2277,7 +2277,7 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.productLabelModel ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2287,7 +2287,7 @@ function createAnalysisDetailsHtml(
           <strong>
             ${escapeHtml(
               details.declarationModel ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2322,7 +2322,7 @@ if (
         <strong>
           ${escapeHtml(
             details.result ||
-            "â€”"
+            "—"
           )}
         </strong>
 
@@ -2332,7 +2332,7 @@ if (
         <strong>
           ${escapeHtml(
             details.confidence ||
-            "â€”"
+            "—"
           )}
         </strong>
 
@@ -2342,7 +2342,7 @@ if (
         <strong>
           ${escapeHtml(
             details.productLabelModel ||
-            "â€”"
+            "—"
           )}
         </strong>
 
@@ -2352,7 +2352,7 @@ if (
         <strong>
           ${escapeHtml(
             details.packagingModel ||
-            "â€”"
+            "—"
           )}
         </strong>
 
@@ -2386,7 +2386,7 @@ if (
           <strong>
             ${escapeHtml(
               details.result ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2396,7 +2396,7 @@ if (
           <strong>
             ${escapeHtml(
               details.confidence ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2406,7 +2406,7 @@ if (
           <strong>
             ${escapeHtml(
               details.productLabelModel ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2416,7 +2416,7 @@ if (
           <strong>
             ${escapeHtml(
               details.testReportModel ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2443,14 +2443,14 @@ if (
         details.declarationStandards
       )
         ? details.declarationStandards.join(", ")
-        : "â€”";
+        : "—";
 
     const testReportStandards =
       Array.isArray(
         details.testReportStandards
       )
         ? details.testReportStandards.join(", ")
-        : "â€”";
+        : "—";
 
     const matchedStandards =
       Array.isArray(
@@ -2483,7 +2483,7 @@ if (
           <strong>
             ${escapeHtml(
               details.result ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2493,7 +2493,7 @@ if (
           <strong>
             ${escapeHtml(
               details.confidence ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2503,7 +2503,7 @@ if (
           <strong>
             ${escapeHtml(
               declarationStandards ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2513,7 +2513,7 @@ if (
           <strong>
             ${escapeHtml(
               testReportStandards ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2523,7 +2523,7 @@ if (
           <strong>
             ${escapeHtml(
               matchedStandards ||
-              "â€”"
+              "—"
             )}
           </strong>
 
@@ -2542,24 +2542,24 @@ if (
 
   const expectedType =
     details.expectedType ||
-    "â€”";
+    "—";
 
 
   const result =
     details.result ||
-    "â€”";
+    "—";
 
 
   const confidence =
     details.confidence ||
-    "â€”";
+    "—";
 
 
   const score =
     typeof details.score ===
     "number"
       ? details.score
-      : "â€”";
+      : "—";
 
 
   return `
