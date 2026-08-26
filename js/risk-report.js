@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.9.1
+// LAUNCHGUARD V0.10
 // RISK REPORT
 //
 // Uses:
@@ -406,6 +406,33 @@ function getModelNumberConsistency(
 }
 
 
+function getPackagingModelNumberConsistency(
+  file
+) {
+
+  const analysis =
+    getDocumentAnalysis(
+      file
+    );
+
+  if (
+    !analysis ||
+    !analysis.contentConsistency ||
+    !analysis.contentConsistency.packagingModelNumber
+  ) {
+
+    return null;
+  }
+
+  return (
+    analysis
+      .contentConsistency
+      .packagingModelNumber
+  );
+
+}
+
+
 function getTestReportModelNumberConsistency(
   file
 ) {
@@ -431,7 +458,6 @@ function getTestReportModelNumberConsistency(
   );
 
 }
-
 
 function getStandardConsistency(
   file
@@ -1166,7 +1192,166 @@ function buildModelNumberFinding(
 
 }
 
+// ==================================================
+// PACKAGING MODEL NUMBER FINDING
+// ==================================================
 
+function buildPackagingModelNumberFinding(
+  productLabel
+) {
+
+  if (!productLabel) {
+    return null;
+  }
+
+
+  const analysis =
+    getPackagingModelNumberConsistency(
+      productLabel
+    );
+
+
+  if (!analysis) {
+    return null;
+  }
+
+
+  if (
+    analysis.status ===
+    "NOT_EVALUATED"
+  ) {
+
+    return null;
+
+  }
+
+
+  const productLabelModel =
+    analysis.productLabelModel;
+
+
+  const packagingModel =
+    analysis.packagingModel;
+
+
+  if (
+    analysis.status ===
+    "CONSISTENT"
+  ) {
+
+    return createFinding(
+
+      "PASS",
+
+      "Packaging model number is consistent",
+
+      "The model number identified on the Product label matches the model number identified on the Packaging.",
+
+      `Product label: ${productLabelModel} · Packaging: ${packagingModel}`,
+
+      "No model-number correction is required between the Product label and Packaging.",
+
+      {
+
+        detailType:
+          "PACKAGING_MODEL_NUMBER_CONSISTENCY",
+
+        result:
+          analysis.status,
+
+        confidence:
+          analysis.confidence,
+
+        productLabelModel:
+          productLabelModel,
+
+        packagingModel:
+          packagingModel
+
+      }
+
+    );
+
+  }
+
+
+  if (
+    analysis.status ===
+    "MISMATCH"
+  ) {
+
+    return createFinding(
+
+      "BLOCK",
+
+      "Packaging model number mismatch",
+
+      analysis.reason ||
+        "The Product label and Packaging identify different model numbers.",
+
+      `Product label: ${productLabelModel} · Packaging: ${packagingModel}`,
+
+      "Verify which model number is correct and align the Product label and Packaging before launch.",
+
+      {
+
+        detailType:
+          "PACKAGING_MODEL_NUMBER_CONSISTENCY",
+
+        result:
+          analysis.status,
+
+        confidence:
+          analysis.confidence,
+
+        productLabelModel:
+          productLabelModel,
+
+        packagingModel:
+          packagingModel
+
+      }
+
+    );
+
+  }
+
+
+  return createFinding(
+
+    "VERIFY",
+
+    "Packaging model number requires verification",
+
+    analysis.reason ||
+      "LAUNCHGUARD could not make a reliable model-number comparison between the Product label and Packaging.",
+
+    `Product label: ${productLabelModel || "not identified"} · Packaging: ${packagingModel || "not identified"}`,
+
+    "Verify the model number on the Product label and Packaging.",
+
+    {
+
+      detailType:
+        "PACKAGING_MODEL_NUMBER_CONSISTENCY",
+
+      result:
+        analysis.status,
+
+      confidence:
+        analysis.confidence,
+
+      productLabelModel:
+        productLabelModel,
+
+      packagingModel:
+        packagingModel
+
+    }
+
+  );
+
+}
 
 // ==================================================
 // TEST REPORT MODEL NUMBER FINDING
@@ -1587,7 +1772,21 @@ function buildFindings(
     )
   );
 
+const packagingModelNumberFinding =
+  buildPackagingModelNumberFinding(
+    evidence.productLabel
+  );
 
+
+if (
+  packagingModelNumberFinding
+) {
+
+  findings.push(
+    packagingModelNumberFinding
+  );
+
+}
   // =================================================
   // INSTRUCTIONS
   // =================================================
@@ -1796,24 +1995,24 @@ function buildFindings(
 
 
   // =================================================
-  // MANUAL REVIEW
-  // =================================================
+// MANUAL REVIEW
+// =================================================
 
-  findings.push(
-    createFinding(
+findings.push(
+  createFinding(
 
-      "VERIFY",
+    "VERIFY",
 
-      "Manual V0.9.1 compliance review still required",
+    "Manual V0.10 compliance review still required",
 
-      "The current validation version can inspect document-type signals and perform limited wattage, manufacturer-country, Declaration model-number, Test report model-number and EN-standard consistency checks, but it does not yet perform a complete automated compliance determination.",
+    "The current validation version can inspect document-type signals and perform limited wattage, manufacturer-country, Declaration model-number, Test report model-number and EN-standard consistency checks, but it does not yet perform a complete automated compliance determination.",
 
-      "Review mode: MANUAL_VALIDATION",
+    "Review mode: MANUAL_VALIDATION",
 
-      "Complete the limited manual pre-launch compliance review before relying on the final launch decision."
+    "Complete the limited manual pre-launch compliance review before relying on the final launch decision."
 
-    )
-  );
+  )
+);
 
 
   return findings;
@@ -2100,7 +2299,70 @@ function createAnalysisDetailsHtml(
 
   }
 
+// =================================================
+// PACKAGING MODEL NUMBER
+// =================================================
 
+if (
+  details.detailType ===
+  "PACKAGING_MODEL_NUMBER_CONSISTENCY"
+) {
+
+  return `
+
+    <div class="finding-row">
+
+      <span>
+        CONSISTENCY ANALYSIS
+      </span>
+
+      <p>
+
+        Result:
+        <strong>
+          ${escapeHtml(
+            details.result ||
+            "—"
+          )}
+        </strong>
+
+        <br>
+
+        Confidence:
+        <strong>
+          ${escapeHtml(
+            details.confidence ||
+            "—"
+          )}
+        </strong>
+
+        <br>
+
+        Product label:
+        <strong>
+          ${escapeHtml(
+            details.productLabelModel ||
+            "—"
+          )}
+        </strong>
+
+        <br>
+
+        Packaging:
+        <strong>
+          ${escapeHtml(
+            details.packagingModel ||
+            "—"
+          )}
+        </strong>
+
+      </p>
+
+    </div>
+
+  `;
+
+}
   // =================================================
   // TEST REPORT MODEL NUMBER
   // =================================================
@@ -2612,10 +2874,10 @@ function determineLaunchDecision(
     return {
 
       status:
-        "NOT_READY",
+        "REVIEW",
 
       label:
-        "NOT READY TO LAUNCH",
+        "REVIEW BEFORE LAUNCH",
 
       reason:
         "REVIEW_OR_DATA_REQUIRED"
@@ -2640,7 +2902,6 @@ function determineLaunchDecision(
 
 }
 
-
 // ==================================================
 // RENDER LAUNCH DECISION
 // ==================================================
@@ -2655,6 +2916,7 @@ function renderLaunchDecision(
 
   launchDecision.classList.remove(
     "ready",
+    "review",
     "not-ready"
   );
 
@@ -2668,16 +2930,30 @@ function renderLaunchDecision(
       "ready"
     );
 
-  } else {
-
-    launchDecision.classList.add(
-      "not-ready"
-    );
+    return;
 
   }
 
-}
 
+  if (
+    decision.status ===
+    "REVIEW"
+  ) {
+
+    launchDecision.classList.add(
+      "review"
+    );
+
+    return;
+
+  }
+
+
+  launchDecision.classList.add(
+    "not-ready"
+  );
+
+}
 
 // ==================================================
 // SAVE REPORT
@@ -2738,7 +3014,7 @@ function saveReport(
 // FEEDBACK
 // ==================================================
 
-function saveFeedback() {
+async function saveFeedback() {
 
   const selectedAction =
     document.querySelector(
@@ -2780,6 +3056,7 @@ function saveFeedback() {
   };
 
 
+  // Local browser copy
   localStorage.setItem(
     "launchguard_report_feedback",
     JSON.stringify(
@@ -2792,6 +3069,66 @@ function saveFeedback() {
     "LAUNCHGUARD_REPORT_FEEDBACK",
     feedback
   );
+
+
+  // Server copy
+  try {
+
+    const response =
+      await fetch(
+        "/api/feedback",
+        {
+
+          method:
+            "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify(
+              feedback
+            )
+
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      !result.ok
+    ) {
+
+      throw new Error(
+        result.error ||
+        "Feedback could not be saved."
+      );
+
+    }
+
+
+    console.log(
+      "LAUNCHGUARD_REPORT_FEEDBACK_SERVER_SAVED",
+      result.feedback
+    );
+
+
+  } catch (
+    error
+  ) {
+
+    console.error(
+      "LAUNCHGUARD_REPORT_FEEDBACK_SERVER_ERROR",
+      error
+    );
+
+  }
 
 }
 

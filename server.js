@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.9.1
+// LAUNCHGUARD V0.10
 // LOCAL MVP SERVER
 //
 // DOCUMENT ANALYSIS:
@@ -1973,9 +1973,9 @@ async function extractDocumentText(
 
   if (
     mimeType ===
-      "application/pdf" ||
+    "application/pdf" ||
     extension ===
-      ".pdf"
+    ".pdf"
   ) {
 
     const buffer =
@@ -1985,7 +1985,7 @@ async function extractDocumentText(
 
 
     // =================================================
-    // V0.9.1 TEST REPORT PARSER
+    // V0.10 TEST REPORT PARSER
     // Force pdfjs-dist for Test report PDFs.
     // This isolates a pdf-parse issue observed where a
     // Test report returned the previously parsed PDF text.
@@ -1993,7 +1993,7 @@ async function extractDocumentText(
 
     if (
       fieldName ===
-        "testReport"
+      "testReport"
     ) {
 
       try {
@@ -2006,7 +2006,7 @@ async function extractDocumentText(
 
         if (
           testReportText.length >=
-            30
+          30
         ) {
 
           console.log(
@@ -2090,7 +2090,7 @@ async function extractDocumentText(
 
       if (
         text.length >=
-          30
+        30
       ) {
 
         return {
@@ -2154,7 +2154,7 @@ async function extractDocumentText(
 
       if (
         fallbackText.length >=
-          30
+        30
       ) {
 
         console.log(
@@ -2258,9 +2258,9 @@ async function extractDocumentText(
 
   if (
     mimeType ===
-      "text/plain" ||
+    "text/plain" ||
     extension ===
-      ".txt"
+    ".txt"
   ) {
 
     try {
@@ -2670,7 +2670,7 @@ function calculateLengthPenalty(
   if (
     !maxReasonableCharacters ||
     textLength <=
-      maxReasonableCharacters
+    maxReasonableCharacters
   ) {
 
     return {
@@ -2739,7 +2739,7 @@ function analyzeDocumentType(
 
   const rule =
     DOCUMENT_TYPE_RULES[
-      fieldName
+    fieldName
     ];
 
 
@@ -2805,7 +2805,7 @@ function analyzeDocumentType(
 
   if (
     text.length <
-      30
+    30
   ) {
 
     return {
@@ -2854,7 +2854,7 @@ function analyzeDocumentType(
 
   if (
     fieldName ===
-      "otherDocument"
+    "otherDocument"
   ) {
 
     return {
@@ -2952,7 +2952,7 @@ function analyzeDocumentType(
 
   if (
     finalScore >=
-      rule.thresholds.strongMatch &&
+    rule.thresholds.strongMatch &&
     hasStructuralEvidence &&
     !hasStrongNegativeEvidence
   ) {
@@ -3006,7 +3006,7 @@ function analyzeDocumentType(
 
   if (
     finalScore >=
-      rule.thresholds.likelyMatch &&
+    rule.thresholds.likelyMatch &&
     hasStructuralEvidence &&
     !hasStrongNegativeEvidence
   ) {
@@ -3060,7 +3060,7 @@ function analyzeDocumentType(
 
   if (
     finalScore <=
-      rule.thresholds.likelyMismatch ||
+    rule.thresholds.likelyMismatch ||
     (
       hasStrongNegativeEvidence &&
       !hasStructuralEvidence
@@ -3212,9 +3212,9 @@ function extractAllWattages(
   while (
     (
       match =
-        regex.exec(
-          normalized
-        )
+      regex.exec(
+        normalized
+      )
     ) !== null
   ) {
 
@@ -3299,9 +3299,9 @@ function extractPrimaryListingWattage(
   while (
     (
       match =
-        regex.exec(
-          normalized
-        )
+      regex.exec(
+        normalized
+      )
     ) !== null
   ) {
 
@@ -3656,7 +3656,7 @@ function analyzeWattageConsistency(
 
   if (
     productLabelAnalysis.status !==
-      "LIKELY_MATCH"
+    "LIKELY_MATCH"
   ) {
 
     return {
@@ -3944,7 +3944,7 @@ function normalizeCountry(
 
   return (
     countryMap[
-      normalized
+    normalized
     ] ||
     null
   );
@@ -4145,7 +4145,7 @@ function analyzeManufacturerCountryConsistency(
   if (
     !productLabelAnalysis ||
     productLabelAnalysis.status !==
-      "LIKELY_MATCH"
+    "LIKELY_MATCH"
   ) {
 
     return {
@@ -4862,7 +4862,7 @@ function analyzeTestReportModelNumberConsistency(
 
   if (
     productLabelAnalysis.status !==
-      "LIKELY_MATCH"
+    "LIKELY_MATCH"
   ) {
 
     return {
@@ -4889,7 +4889,7 @@ function analyzeTestReportModelNumberConsistency(
 
   if (
     testReportAnalysis.status !==
-      "LIKELY_MATCH"
+    "LIKELY_MATCH"
   ) {
 
     return {
@@ -5062,7 +5062,210 @@ function analyzeTestReportModelNumberConsistency(
 
 }
 
+// ==================================================
+// PACKAGING MODEL NUMBER CONSISTENCY
+// PRODUCT LABEL <-> PACKAGING
+// ==================================================
 
+function analyzePackagingModelNumberConsistency(
+  productLabelAnalysis,
+  productLabelText,
+  packagingAnalysis,
+  packagingText
+) {
+
+  if (
+    !productLabelAnalysis ||
+    !packagingAnalysis
+  ) {
+
+    return {
+
+      status:
+        "NOT_EVALUATED",
+
+      confidence:
+        "LOW",
+
+      productLabelModel:
+        null,
+
+      packagingModel:
+        null,
+
+      reason:
+        "Packaging model-number consistency could not be evaluated because both the Product label and Packaging are required."
+
+    };
+
+  }
+
+
+  if (
+    productLabelAnalysis.status !==
+    "LIKELY_MATCH"
+  ) {
+
+    return {
+
+      status:
+        "NOT_EVALUATED",
+
+      confidence:
+        "LOW",
+
+      productLabelModel:
+        null,
+
+      packagingModel:
+        null,
+
+      reason:
+        "Packaging model-number consistency was not evaluated because the Product label was not reliably classified."
+
+    };
+
+  }
+
+
+  if (
+    packagingAnalysis.status !==
+    "LIKELY_MATCH"
+  ) {
+
+    return {
+
+      status:
+        "NOT_EVALUATED",
+
+      confidence:
+        "LOW",
+
+      productLabelModel:
+        null,
+
+      packagingModel:
+        null,
+
+      reason:
+        "Packaging model-number consistency was not evaluated because the uploaded Packaging was not reliably classified."
+
+    };
+
+  }
+
+
+  const productLabelResult =
+    extractModelNumber(
+      productLabelText
+    );
+
+
+  const packagingResult =
+    extractModelNumber(
+      packagingText
+    );
+
+
+  if (
+    !productLabelResult.value
+  ) {
+
+    return {
+
+      status:
+        "VERIFY",
+
+      confidence:
+        "LOW",
+
+      productLabelModel:
+        null,
+
+      packagingModel:
+        packagingResult.value,
+
+      reason:
+        "No sufficiently clear model number could be identified on the Product label."
+
+    };
+
+  }
+
+
+  if (
+    !packagingResult.value
+  ) {
+
+    return {
+
+      status:
+        "VERIFY",
+
+      confidence:
+        "LOW",
+
+      productLabelModel:
+        productLabelResult.value,
+
+      packagingModel:
+        null,
+
+      reason:
+        "No sufficiently clear model number could be identified on the Packaging."
+
+    };
+
+  }
+
+
+  if (
+    productLabelResult.value ===
+    packagingResult.value
+  ) {
+
+    return {
+
+      status:
+        "CONSISTENT",
+
+      confidence:
+        "HIGH",
+
+      productLabelModel:
+        productLabelResult.value,
+
+      packagingModel:
+        packagingResult.value,
+
+      reason:
+        `The model number on the Product label (${productLabelResult.value}) matches the model number identified on the Packaging (${packagingResult.value}).`
+
+    };
+
+  }
+
+
+  return {
+
+    status:
+      "MISMATCH",
+
+    confidence:
+      "HIGH",
+
+    productLabelModel:
+      productLabelResult.value,
+
+    packagingModel:
+      packagingResult.value,
+
+    reason:
+      `The Product label identifies model ${productLabelResult.value}, while the Packaging identifies model ${packagingResult.value}.`
+
+  };
+
+}
 // ==================================================
 // EN STANDARD NORMALIZATION
 // ==================================================
@@ -5117,9 +5320,9 @@ function extractEnStandards(
   while (
     (
       match =
-        regex.exec(
-          normalized
-        )
+      regex.exec(
+        normalized
+      )
     ) !== null
   ) {
 
@@ -5216,7 +5419,7 @@ function analyzeStandardConsistency(
 
   if (
     declarationAnalysis.status !==
-      "LIKELY_MATCH"
+    "LIKELY_MATCH"
   ) {
 
     return {
@@ -5245,7 +5448,7 @@ function analyzeStandardConsistency(
 
   if (
     testReportAnalysis.status !==
-      "LIKELY_MATCH"
+    "LIKELY_MATCH"
   ) {
 
     return {
@@ -5346,11 +5549,11 @@ function analyzeStandardConsistency(
         (
           value
         ) => [
-          getEnStandardBase(
+            getEnStandardBase(
+              value
+            ),
             value
-          ),
-          value
-        ]
+          ]
       )
     );
 
@@ -5360,11 +5563,11 @@ function analyzeStandardConsistency(
         (
           value
         ) => [
-          getEnStandardBase(
+            getEnStandardBase(
+              value
+            ),
             value
-          ),
-          value
-        ]
+          ]
       )
     );
 
@@ -5534,16 +5737,16 @@ async function analyzeStoredFile(
 
   const expectedRule =
     DOCUMENT_TYPE_RULES[
-      fieldName
+    fieldName
     ];
 
 
   return {
 
-   originalName:
-  fixUploadedFileName(
-    file.originalname
-  ),
+    originalName:
+      fixUploadedFileName(
+        file.originalname
+      ),
 
     storedName:
       file.filename,
@@ -5655,7 +5858,7 @@ function safeParseJson(
 
   if (
     typeof value !==
-      "string"
+    "string"
   ) {
 
     return {};
@@ -5830,7 +6033,7 @@ app.post(
             fileArray
           ) ||
           fileArray.length ===
-            0
+          0
         ) {
 
           continue;
@@ -5882,6 +6085,9 @@ app.post(
         storedFiles.productLabel ||
         null;
 
+      const packaging =
+        storedFiles.packaging ||
+        null;
 
       const declaration =
         storedFiles.declaration ||
@@ -5913,7 +6119,7 @@ app.post(
 
             productLabel
               .extractedText ||
-              ""
+            ""
 
           );
 
@@ -5936,7 +6142,7 @@ app.post(
 
             productLabel
               .extractedText ||
-              ""
+            ""
 
           );
 
@@ -5957,13 +6163,13 @@ app.post(
           .documentTypeAnalysis
           .contentConsistency = {
 
-            wattage:
-              wattage,
+          wattage:
+            wattage,
 
-            manufacturerCountry:
-              manufacturerCountry
+          manufacturerCountry:
+            manufacturerCountry
 
-          };
+        };
 
       }
 
@@ -5986,14 +6192,14 @@ app.post(
 
             productLabel
               .extractedText ||
-              "",
+            "",
 
             declaration
               .documentTypeAnalysis,
 
             declaration
               .extractedText ||
-              ""
+            ""
 
           );
 
@@ -6020,7 +6226,7 @@ app.post(
           .documentTypeAnalysis
           .contentConsistency
           .modelNumber =
-            modelNumber;
+          modelNumber;
 
 
         if (
@@ -6041,11 +6247,86 @@ app.post(
           .documentTypeAnalysis
           .contentConsistency
           .modelNumber =
-            modelNumber;
+          modelNumber;
 
       }
 
+      // =================================================
+      // PACKAGING MODEL NUMBER
+      // PRODUCT LABEL <-> PACKAGING
+      // =================================================
 
+      if (
+        productLabel &&
+        packaging
+      ) {
+
+        const packagingModelNumber =
+          analyzePackagingModelNumberConsistency(
+
+            productLabel
+              .documentTypeAnalysis,
+
+            productLabel
+              .extractedText ||
+            "",
+
+            packaging
+              .documentTypeAnalysis,
+
+            packaging
+              .extractedText ||
+            ""
+
+          );
+
+
+        consistencyAnalysis.packagingModelNumber =
+          packagingModelNumber;
+
+
+        if (
+          !productLabel
+            .documentTypeAnalysis
+            .contentConsistency
+        ) {
+
+          productLabel
+            .documentTypeAnalysis
+            .contentConsistency =
+            {};
+
+        }
+
+
+        productLabel
+          .documentTypeAnalysis
+          .contentConsistency
+          .packagingModelNumber =
+          packagingModelNumber;
+
+
+        if (
+          !packaging
+            .documentTypeAnalysis
+            .contentConsistency
+        ) {
+
+          packaging
+            .documentTypeAnalysis
+            .contentConsistency =
+            {};
+
+        }
+
+
+        packaging
+          .documentTypeAnalysis
+          .contentConsistency
+          .modelNumber =
+          packagingModelNumber;
+
+      }
 
 
       // =================================================
@@ -6066,14 +6347,14 @@ app.post(
 
             productLabel
               .extractedText ||
-              "",
+            "",
 
             testReport
               .documentTypeAnalysis,
 
             testReport
               .extractedText ||
-              ""
+            ""
 
           );
 
@@ -6100,7 +6381,7 @@ app.post(
           .documentTypeAnalysis
           .contentConsistency
           .testReportModelNumber =
-            testReportModelNumber;
+          testReportModelNumber;
 
 
         if (
@@ -6121,12 +6402,12 @@ app.post(
           .documentTypeAnalysis
           .contentConsistency
           .modelNumber =
-            testReportModelNumber;
+          testReportModelNumber;
 
       }
 
 
-      
+
       // =================================================
       // EN STANDARD CONSISTENCY
       // DECLARATION OF CONFORMITY <-> TEST REPORT
@@ -6145,14 +6426,14 @@ app.post(
 
             declaration
               .extractedText ||
-              "",
+            "",
 
             testReport
               .documentTypeAnalysis,
 
             testReport
               .extractedText ||
-              ""
+            ""
 
           );
 
@@ -6176,7 +6457,7 @@ app.post(
           .documentTypeAnalysis
           .contentConsistency
           .standardConsistency =
-            standardConsistency;
+          standardConsistency;
 
         if (
           !testReport
@@ -6195,12 +6476,12 @@ app.post(
           .documentTypeAnalysis
           .contentConsistency
           .standardConsistency =
-            standardConsistency;
+          standardConsistency;
 
       }
 
 
-// =================================================
+      // =================================================
       // REMOVE FULL EXTRACTED TEXT
       // =================================================
 
@@ -6232,7 +6513,7 @@ app.post(
           "MANUAL_VALIDATION",
 
         analysisVersion:
-          "0.9.1-test-report-pdfjs",
+          "0.10-packaging-model-number",
 
         product:
           product,
@@ -6341,147 +6622,172 @@ app.post(
             consistencyAnalysis.wattage
               ? {
 
-                  status:
-                    consistencyAnalysis
-                      .wattage
-                      .status,
+                status:
+                  consistencyAnalysis
+                    .wattage
+                    .status,
 
-                  listing:
-                    consistencyAnalysis
-                      .wattage
-                      .listingPrimaryValue,
+                listing:
+                  consistencyAnalysis
+                    .wattage
+                    .listingPrimaryValue,
 
-                  label:
-                    consistencyAnalysis
-                      .wattage
-                      .labelPrimaryValue,
+                label:
+                  consistencyAnalysis
+                    .wattage
+                    .labelPrimaryValue,
 
-                  confidence:
-                    consistencyAnalysis
-                      .wattage
-                      .confidence
+                confidence:
+                  consistencyAnalysis
+                    .wattage
+                    .confidence
 
-                }
+              }
               : null,
 
 
           manufacturerCountryConsistency:
-  consistencyAnalysis.manufacturerCountry
-    ? {
+            consistencyAnalysis.manufacturerCountry
+              ? {
 
-        status:
-          consistencyAnalysis
-            .manufacturerCountry
-            .status,
+                status:
+                  consistencyAnalysis
+                    .manufacturerCountry
+                    .status,
 
-        setup:
-          consistencyAnalysis
-            .manufacturerCountry
-            .setupCountry,
+                setup:
+                  consistencyAnalysis
+                    .manufacturerCountry
+                    .setupCountry,
 
-        label:
-          consistencyAnalysis
-            .manufacturerCountry
-            .labelCountry,
+                label:
+                  consistencyAnalysis
+                    .manufacturerCountry
+                    .labelCountry,
 
-        confidence:
-          consistencyAnalysis
-            .manufacturerCountry
-            .confidence
+                confidence:
+                  consistencyAnalysis
+                    .manufacturerCountry
+                    .confidence
 
-      }
-    : null,
-
-
-modelNumberConsistency:
-  consistencyAnalysis.modelNumber
-    ? {
-
-        status:
-          consistencyAnalysis
-            .modelNumber
-            .status,
-
-        productLabel:
-          consistencyAnalysis
-            .modelNumber
-            .productLabelModel,
-
-        declaration:
-          consistencyAnalysis
-            .modelNumber
-            .declarationModel,
-
-        confidence:
-          consistencyAnalysis
-            .modelNumber
-            .confidence
-
-      }
-    : null
-,
+              }
+              : null,
 
 
-testReportModelNumberConsistency:
-  consistencyAnalysis.testReportModelNumber
-    ? {
+          modelNumberConsistency:
+            consistencyAnalysis.modelNumber
+              ? {
 
-        status:
-          consistencyAnalysis
-            .testReportModelNumber
-            .status,
+                status:
+                  consistencyAnalysis
+                    .modelNumber
+                    .status,
 
-        productLabel:
-          consistencyAnalysis
-            .testReportModelNumber
-            .productLabelModel,
+                productLabel:
+                  consistencyAnalysis
+                    .modelNumber
+                    .productLabelModel,
 
-        testReport:
-          consistencyAnalysis
-            .testReportModelNumber
-            .testReportModel,
+                declaration:
+                  consistencyAnalysis
+                    .modelNumber
+                    .declarationModel,
 
-        confidence:
-          consistencyAnalysis
-            .testReportModelNumber
-            .confidence
+                confidence:
+                  consistencyAnalysis
+                    .modelNumber
+                    .confidence
 
-      }
-    : null
-,
+              }
+              : null
+          ,
+          packagingModelNumberConsistency:
+            consistencyAnalysis.packagingModelNumber
+              ? {
+
+                status:
+                  consistencyAnalysis
+                    .packagingModelNumber
+                    .status,
+
+                productLabel:
+                  consistencyAnalysis
+                    .packagingModelNumber
+                    .productLabelModel,
+
+                packaging:
+                  consistencyAnalysis
+                    .packagingModelNumber
+                    .packagingModel,
+
+                confidence:
+                  consistencyAnalysis
+                    .packagingModelNumber
+                    .confidence
+
+              }
+              : null,
+
+          testReportModelNumberConsistency:
+            consistencyAnalysis.testReportModelNumber
+              ? {
+
+                status:
+                  consistencyAnalysis
+                    .testReportModelNumber
+                    .status,
+
+                productLabel:
+                  consistencyAnalysis
+                    .testReportModelNumber
+                    .productLabelModel,
+
+                testReport:
+                  consistencyAnalysis
+                    .testReportModelNumber
+                    .testReportModel,
+
+                confidence:
+                  consistencyAnalysis
+                    .testReportModelNumber
+                    .confidence
+
+              }
+              : null
+          ,
 
 
-standardConsistency:
-  consistencyAnalysis.standardConsistency
-    ? {
+          standardConsistency:
+            consistencyAnalysis.standardConsistency
+              ? {
 
-        status:
-          consistencyAnalysis
-            .standardConsistency
-            .status,
+                status:
+                  consistencyAnalysis
+                    .standardConsistency
+                    .status,
 
-        declaration:
-          consistencyAnalysis
-            .standardConsistency
-            .declarationStandards,
+                declaration:
+                  consistencyAnalysis
+                    .standardConsistency
+                    .declarationStandards,
 
-        testReport:
-          consistencyAnalysis
-            .standardConsistency
-            .testReportStandards,
+                testReport:
+                  consistencyAnalysis
+                    .standardConsistency
+                    .testReportStandards,
 
-        matched:
-          consistencyAnalysis
-            .standardConsistency
-            .matchedStandards,
+                matched:
+                  consistencyAnalysis
+                    .standardConsistency
+                    .matchedStandards,
 
-        confidence:
-          consistencyAnalysis
-            .standardConsistency
-            .confidence
+                confidence:
+                  consistencyAnalysis
+                    .standardConsistency
+                    .confidence
 
-      }
-    : null
+              }
+              : null
 
         }
       );
@@ -6698,8 +7004,9 @@ app.get(
       service:
         "LAUNCHGUARD",
 
+        
       version:
-        "0.9.1",
+        "0.10",
 
       documentAnalysis:
         true,
@@ -6712,19 +7019,307 @@ app.get(
       analysisMode:
         "WEIGHTED_DOCUMENT_TYPE",
 
-    consistencyChecks: [
-  "WATTAGE",
-  "MANUFACTURER_COUNTRY",
-  "MODEL_NUMBER",
-  "TEST_REPORT_MODEL_NUMBER",
-  "STANDARD_CONSISTENCY"
-]
+      consistencyChecks: [
+        "WATTAGE",
+        "MANUFACTURER_COUNTRY",
+        "MODEL_NUMBER",
+        "TEST_REPORT_MODEL_NUMBER",
+        "STANDARD_CONSISTENCY",
+        "PACKAGING_MODEL_NUMBER"
+      ]
 
     });
 
   }
 );
 
+// ==================================================
+// SAVE REPORT FEEDBACK
+// ==================================================
+
+app.post(
+  "/api/feedback",
+
+  express.json(),
+
+  (
+    req,
+    res
+  ) => {
+
+    try {
+
+      const checkId =
+        String(
+          req.body.checkId ||
+          ""
+        )
+          .trim()
+          .toUpperCase();
+
+
+      const action =
+        String(
+          req.body.action ||
+          ""
+        )
+          .trim();
+
+
+      const wouldReuse =
+        String(
+          req.body.wouldReuse ||
+          ""
+        )
+          .trim();
+
+
+      if (
+        !isValidCheckId(
+          checkId
+        )
+      ) {
+
+        return res
+          .status(
+            400
+          )
+          .json({
+
+            ok:
+              false,
+
+            error:
+              "Invalid check ID."
+
+          });
+
+      }
+
+
+      const allowedActions = [
+        "changed_listing",
+        "changed_documentation",
+        "changed_packaging",
+        "asked_expert",
+        "delayed_launch",
+        "no_action"
+      ];
+
+
+      const allowedReuse = [
+        "yes",
+        "no"
+      ];
+
+
+      if (
+        action &&
+        !allowedActions.includes(
+          action
+        )
+      ) {
+
+        return res
+          .status(
+            400
+          )
+          .json({
+
+            ok:
+              false,
+
+            error:
+              "Invalid feedback action."
+
+          });
+
+      }
+
+
+      if (
+        wouldReuse &&
+        !allowedReuse.includes(
+          wouldReuse
+        )
+      ) {
+
+        return res
+          .status(
+            400
+          )
+          .json({
+
+            ok:
+              false,
+
+            error:
+              "Invalid reuse answer."
+
+          });
+
+      }
+
+
+      const feedbackFile =
+        path.join(
+          DATA_DIR,
+          "feedback.json"
+        );
+
+
+      let feedbackEntries = [];
+
+
+      if (
+        fs.existsSync(
+          feedbackFile
+        )
+      ) {
+
+        try {
+
+          const raw =
+            fs.readFileSync(
+              feedbackFile,
+              "utf8"
+            );
+
+
+          const parsed =
+            JSON.parse(
+              raw
+            );
+
+
+          if (
+            Array.isArray(
+              parsed
+            )
+          ) {
+
+            feedbackEntries =
+              parsed;
+
+          }
+
+        } catch (
+          readError
+        ) {
+
+          console.error(
+            "LAUNCHGUARD_FEEDBACK_READ_ERROR",
+            readError
+          );
+
+        }
+
+      }
+
+
+      const feedback = {
+
+        checkId:
+          checkId,
+
+        action:
+          action,
+
+        wouldReuse:
+          wouldReuse,
+
+        updatedAt:
+          new Date()
+            .toISOString()
+
+      };
+
+
+      const existingIndex =
+        feedbackEntries.findIndex(
+          (
+            item
+          ) =>
+            item &&
+            item.checkId ===
+              checkId
+        );
+
+
+      if (
+        existingIndex >= 0
+      ) {
+
+        feedbackEntries[
+          existingIndex
+        ] =
+          feedback;
+
+      } else {
+
+        feedbackEntries.push(
+          feedback
+        );
+
+      }
+
+
+      fs.writeFileSync(
+        feedbackFile,
+        JSON.stringify(
+          feedbackEntries,
+          null,
+          2
+        ),
+        "utf8"
+      );
+
+
+      console.log(
+        "LAUNCHGUARD_REPORT_FEEDBACK_SAVED",
+        feedback
+      );
+
+
+      return res.json({
+
+        ok:
+          true,
+
+        feedback:
+          feedback
+
+      });
+
+
+    } catch (
+      error
+    ) {
+
+      console.error(
+        "LAUNCHGUARD_FEEDBACK_SAVE_ERROR",
+        error
+      );
+
+
+      return res
+        .status(
+          500
+        )
+        .json({
+
+          ok:
+            false,
+
+          error:
+            "Feedback could not be saved."
+
+        });
+
+    }
+
+  }
+);
 
 // ==================================================
 // API 404
@@ -6839,9 +7434,9 @@ app.listen(
     );
 
 
-   console.log(
-  "LAUNCHGUARD V0.9.1"
-);
+    console.log(
+      "LAUNCHGUARD V0.10"
+    );
 
 
     console.log(
@@ -6885,23 +7480,23 @@ app.listen(
 
 
     console.log(
-  "Consistency check: MANUFACTURER COUNTRY ENABLED"
-);
+      "Consistency check: MANUFACTURER COUNTRY ENABLED"
+    );
 
 
-  console.log(
-  "Consistency check: MODEL NUMBER ENABLED"
-);
+    console.log(
+      "Consistency check: MODEL NUMBER ENABLED"
+    );
 
 
-  console.log(
-  "Consistency check: TEST REPORT MODEL NUMBER ENABLED"
-);
+    console.log(
+      "Consistency check: TEST REPORT MODEL NUMBER ENABLED"
+    );
 
 
-  console.log(
-  "Consistency check: STANDARD CONSISTENCY ENABLED"
-);
+    console.log(
+      "Consistency check: STANDARD CONSISTENCY ENABLED"
+    );
 
     console.log(
       "======================================"

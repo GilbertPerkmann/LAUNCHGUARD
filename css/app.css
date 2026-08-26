@@ -1430,6 +1430,13 @@
   color: #ae382b;
 }
 
+.launch-decision.review {
+  border: 1px solid #efd59a;
+
+  background: #fff7e8;
+  color: #946400;
+}
+
 .launch-decision.ready {
   border: 1px solid #bfe1cc;
 
