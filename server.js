@@ -6859,6 +6859,14 @@ app.post(
 // ==================================================
 // GET SUBMISSION
 // ==================================================
+// SECURITY:
+// Submission data can contain confidential product,
+// listing and compliance information.
+//
+// Public retrieval is intentionally disabled.
+// The current MVP does not require clients to read
+// stored submissions directly.
+// ==================================================
 
 app.get(
   "/api/submissions/:checkId",
@@ -6868,121 +6876,36 @@ app.get(
     res
   ) => {
 
-    try {
-
-      const checkId =
-        String(
-          req.params.checkId ||
-          ""
-        )
-          .trim()
-          .toUpperCase();
-
-
-      if (
-        !isValidCheckId(
-          checkId
-        )
-      ) {
-
-        return res
-          .status(
-            400
+    console.warn(
+      "LAUNCHGUARD_SUBMISSION_READ_BLOCKED",
+      {
+        checkId:
+          String(
+            req.params.checkId ||
+            ""
           )
-          .json({
-
-            ok:
-              false,
-
-            error:
-              "Invalid check ID."
-
-          });
-
+            .trim()
+            .toUpperCase()
       }
+    );
 
 
-      const dataFile =
-        path.join(
-          DATA_DIR,
-          `${checkId}.json`
-        );
-
-
-      if (
-        !fs.existsSync(
-          dataFile
-        )
-      ) {
-
-        return res
-          .status(
-            404
-          )
-          .json({
-
-            ok:
-              false,
-
-            error:
-              "Submission not found."
-
-          });
-
-      }
-
-
-      const raw =
-        fs.readFileSync(
-          dataFile,
-          "utf8"
-        );
-
-
-      const submission =
-        JSON.parse(
-          raw
-        );
-
-
-      return res.json({
+    return res
+      .status(
+        403
+      )
+      .json({
 
         ok:
-          true,
+          false,
 
-        submission:
-          submission
+        error:
+          "Public submission access is disabled."
 
       });
 
-
-    } catch (error) {
-
-      console.error(
-        "LAUNCHGUARD_SUBMISSION_READ_ERROR",
-        error
-      );
-
-
-      return res
-        .status(
-          500
-        )
-        .json({
-
-          ok:
-            false,
-
-          error:
-            "Submission could not be read."
-
-        });
-
-    }
-
   }
 );
-
 
 // ==================================================
 // HEALTH CHECK
