@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.12
+// LAUNCHGUARD V0.13
 // RISK REPORT
 //
 // Uses:
@@ -2227,7 +2227,7 @@ findings.push(
 
     "VERIFY",
 
-    "Manual V0.12 compliance review still required",
+    "Manual V0.13 compliance review still required",
 
     "The current validation version can inspect document-type signals and perform limited wattage, manufacturer-country, Declaration model-number, Test report model-number and EN-standard consistency checks, but it does not yet perform a complete automated compliance determination.",
 

@@ -1,7 +1,7 @@
 "use strict";
 
 // ==================================================
-// LAUNCHGUARD V0.12
+// LAUNCHGUARD V0.13
 // LOCAL MVP SERVER
 //
 // DOCUMENT ANALYSIS:
@@ -17,6 +17,12 @@
 // - model-number consistency: Product label <-> Declaration of Conformity
 // - model-number consistency: Product label <-> Test report
 // - EN-standard consistency: Declaration of Conformity <-> Test report
+// - manufacturer-identity consistency across selected evidence
+//
+// PRIVACY V0.13:
+// - uploaded originals are temporary processing files
+// - originals are deleted immediately after analysis
+// - full extracted text and text previews are not persisted
 //
 // IMPORTANT:
 // This is a pre-launch risk signal system.
@@ -6289,14 +6295,7 @@ async function analyzeStoredFile(
     */
 
     extractedText:
-      extraction.text,
-
-
-    extractedTextPreview:
-      extraction.text.slice(
-        0,
-        1800
-      )
+      extraction.text
 
   };
 
@@ -6410,6 +6409,190 @@ function removeFilesIfPresent(
     }
 
   }
+
+}
+
+
+// ==================================================
+// V0.13 PRIVACY CLEANUP
+// ==================================================
+
+function removeDirectoryIfEmpty(
+  directory
+) {
+
+  if (
+    !directory ||
+    !fs.existsSync(
+      directory
+    )
+  ) {
+
+    return;
+  }
+
+
+  try {
+
+    if (
+      fs.readdirSync(
+        directory
+      ).length ===
+      0
+    ) {
+
+      fs.rmdirSync(
+        directory
+      );
+
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "LAUNCHGUARD_UPLOAD_DIRECTORY_DELETE_ERROR",
+      {
+        path:
+          directory,
+
+        message:
+          error.message
+      }
+    );
+
+  }
+
+}
+
+
+function deleteUploadedOriginals(
+  files,
+  checkUploadDir
+) {
+
+  let deletedCount =
+    0;
+
+
+  if (
+    files
+  ) {
+
+    for (
+      const fileArray
+      of Object.values(
+        files
+      )
+    ) {
+
+      if (
+        !Array.isArray(
+          fileArray
+        )
+      ) {
+
+        continue;
+      }
+
+
+      for (
+        const file
+        of fileArray
+      ) {
+
+        if (
+          !file
+        ) {
+
+          continue;
+        }
+
+
+        const possiblePaths =
+          new Set();
+
+
+        if (
+          file.path
+        ) {
+
+          possiblePaths.add(
+            file.path
+          );
+
+        }
+
+
+        if (
+          checkUploadDir &&
+          file.filename
+        ) {
+
+          possiblePaths.add(
+            path.join(
+              checkUploadDir,
+              file.filename
+            )
+          );
+
+        }
+
+
+        for (
+          const filePath
+          of possiblePaths
+        ) {
+
+          if (
+            !filePath ||
+            !fs.existsSync(
+              filePath
+            )
+          ) {
+
+            continue;
+          }
+
+
+          try {
+
+            fs.unlinkSync(
+              filePath
+            );
+
+            deletedCount +=
+              1;
+
+          } catch (error) {
+
+            console.warn(
+              "LAUNCHGUARD_UPLOADED_ORIGINAL_DELETE_ERROR",
+              {
+                path:
+                  filePath,
+
+                message:
+                  error.message
+              }
+            );
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+  removeDirectoryIfEmpty(
+    checkUploadDir
+  );
+
+
+  return deletedCount;
 
 }
 
@@ -7031,8 +7214,11 @@ app.post(
       }
 
       // =================================================
-      // REMOVE FULL EXTRACTED TEXT
+      // V0.13 REMOVE EXTRACTED DOCUMENT TEXT BEFORE STORAGE
       // =================================================
+      // Cross-evidence analysis above may use the full text
+      // only during this request. Neither the full text nor
+      // a text preview is persisted in the submission JSON.
 
       for (
         const file
@@ -7042,6 +7228,7 @@ app.post(
       ) {
 
         delete file.extractedText;
+        delete file.extractedTextPreview;
 
       }
 
@@ -7084,7 +7271,7 @@ app.post(
           "MANUAL_VALIDATION",
 
      analysisVersion:
-  "0.12-manufacturer-identity",
+  "0.13-ephemeral-evidence",
 
         product:
           product,
@@ -7126,6 +7313,31 @@ app.post(
         ),
 
         "utf8"
+      );
+
+
+      // =================================================
+      // V0.13 DELETE UPLOADED ORIGINALS AFTER ANALYSIS
+      // =================================================
+      // At this point the analysis result has been safely
+      // persisted. The source files are no longer required.
+
+      const deletedOriginalFileCount =
+        deleteUploadedOriginals(
+          files,
+          checkUploadDir
+        );
+
+
+      console.log(
+        "LAUNCHGUARD_UPLOADED_ORIGINALS_DELETED",
+        {
+          checkId:
+            checkId,
+
+          deletedFileCount:
+            deletedOriginalFileCount
+        }
       );
 
 
@@ -7698,7 +7910,7 @@ app.get(
 
         
       version:
-        "0.11",
+        "0.13",
 
       documentAnalysis:
         true,
@@ -8127,7 +8339,7 @@ app.listen(
 
 
     console.log(
-      "LAUNCHGUARD V0.12"
+      "LAUNCHGUARD V0.13"
     );
 
 
